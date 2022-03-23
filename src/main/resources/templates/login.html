@@ -1,0 +1,56 @@
+<th:block>
+        <header id="header" class="ex-2-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+
+                        <!--login form-->
+                        <div class="form-container light-background">
+                            <form th:method="POST" th:action="@{/login}"
+                                  id="logInForm" data-toggle="validator" data-focus="false">
+
+                                <!--email-->
+                                <div class="form-group">
+                                    <input
+                                            th:placeholder="email"
+                                            id="email"
+                                            name="username"
+                                            type="email"
+                                            class="form-control-input"
+                                            required/>
+                                </div>
+
+                                <!--password-->
+                                <div class="form-group">
+                                    <input
+                                            th:placeholder="password"
+                                            id="password"
+                                            name="password"
+                                            type="password"
+                                            class="form-control-input"
+                                            required/>
+                                </div>
+
+                                <!--login button-->
+                                <div class="form-group">
+                                    <button
+                                            th:text="Login"
+                                            type="submit"
+                                            class="form-control-submit-button">
+                                    </button>
+
+                                </div>
+
+                                <!--error message-->
+                                <label class="text-danger"
+                                       th:if="${hasError}"
+                                       th:text="#{error}">
+                                </label>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+</th:block>

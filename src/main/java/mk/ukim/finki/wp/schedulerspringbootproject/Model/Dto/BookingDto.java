@@ -3,19 +3,20 @@ package mk.ukim.finki.wp.schedulerspringbootproject.Model.Dto;
 import lombok.Data;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
 public class BookingDto {
 
-    private Date bookedDate;
+    private LocalDate bookedDate;
     private String email;
     private BookingStatus status;
 
-    public BookingDto(Date bookedDate, String email) {
+    public BookingDto(LocalDate bookedDate, String email) {
         this.bookedDate = bookedDate;
         this.email = email;
-        this.status = BookingStatus.CREATED;
+        this.status = BookingStatus.PENDING;
     }
 
 }

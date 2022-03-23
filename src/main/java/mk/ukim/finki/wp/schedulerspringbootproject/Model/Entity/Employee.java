@@ -2,6 +2,7 @@ package mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity;
 
 import lombok.Data;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.Role;
+import org.hibernate.annotations.Fetch;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -28,7 +29,7 @@ public class Employee implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
     //@JsonIgnore
     private List<Booking> bookingList;
 
@@ -83,4 +84,10 @@ public class Employee implements UserDetails {
     }
 
     //----------------------- END USER DETAILS SECTION -----------------------------
+
+
+    @Override
+    public String toString() {
+        return "email='" + email;
+    }
 }

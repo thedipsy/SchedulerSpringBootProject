@@ -1,0 +1,74 @@
+<th:block>
+    <header id="header" class="ex-2-header">
+        <div class="container">
+
+            <div class="row">
+
+                <div class="col-lg-8">
+                    <div class="form-container dark-background">
+                        <h4>Profile Overview</h4>
+                        <br/>
+                        <div class="profile-div">
+                            <li class="list-group-item" th:if="${user} != null"
+                                th:text="'Name: ' + ${user.getName()}"></li>
+                            <li class="list-group-item" th:if="${user} != null"
+                                th:text="'Surname: ' + ${user.getSurname()}"></li>
+                            <li class="list-group-item" th:if="${user} != null"
+                                th:text="'Email: ' + ${user.getEmail()}"></li>
+                            <li class="list-group-item" th:if="${user} != null"
+                                th:text="'Phone: ' + ${user.getPhone()}"></li>
+                            <li class="list-group-item" th:if="${user.getDesk()} != null"
+                                th:text="'Desk: '+ ${user.getDesk()}"></li>
+                        </div>
+                        <br/>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="form-container dark-background">
+                        <form th:method="POST"
+                              th:action="@{/profile/change-password}"
+                              id="logInForm" data-toggle="validator" data-focus="false">
+
+                            <h4>Change Password</h4>
+
+                            <!--old password-->
+                            <div class="form-group">
+                                <input
+                                        th:placeholder="old_password"
+                                       id="old_password"
+                                       name="old_password"
+                                       type="password"
+                                       class="form-control-input"
+                                       required/>
+                            </div>
+                            <!--new password-->
+                            <div class="form-group">
+                                <input
+                                        th:placeholder="new_password"
+                                       id="new_password"
+                                       name="new_password"
+                                       type="password"
+                                       class="form-control-input"
+                                       required/>
+                            </div>
+                            <!--confirm password-->
+                            <div class="form-group">
+                                <input
+                                        th:placeholder="confirm_password"
+                                       id="confirm_password"
+                                       name="confirm_password"
+                                       type="password"
+                                       class="form-control-input"
+                                       required/>
+                            </div>
+
+                            <button class="red-button" type="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+</th:block>

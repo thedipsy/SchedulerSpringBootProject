@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Work Scheduler</title>
+    <link rel="stylesheet" type="text/css" href="../static/css/main.css" th:href="@{/css/main.css}">
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}">
+</head>
+<body>
+
+    <nav th:replace="fragments/navigation"></nav>
+
+    <section th:include="${bodyContent}"></section>
+
+    <footer th:replace="fragments/footer"></footer>
+
+</body>
+</html>

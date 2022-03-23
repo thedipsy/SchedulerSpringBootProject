@@ -3,6 +3,7 @@ package mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity;
 import lombok.Data;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus;
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -13,7 +14,7 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bookingId;
 
-    private Date bookedDate;
+    private LocalDate bookedDate;
 
     @ManyToOne
     private Employee employee;
@@ -27,10 +28,14 @@ public class Booking {
     public Booking() {
     }
 
-    public Booking(Date bookedDate, Employee employee) {
+    public Booking(LocalDate bookedDate, Employee employee) {
         this.bookedDate = bookedDate;
         this.employee = employee;
-        this.status = BookingStatus.CREATED;
+        this.status = BookingStatus.PENDING;
     }
 
+    @Override
+    public String toString() {
+        return "bookingId=" + bookingId;
+    }
 }
