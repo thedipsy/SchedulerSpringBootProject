@@ -1,6 +1,5 @@
 package mk.ukim.finki.wp.schedulerspringbootproject.Web.Controller;
 
-import mk.ukim.finki.wp.schedulerspringbootproject.Model.Dto.EmployeeDto;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Booking;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Employee;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus;
@@ -38,12 +37,27 @@ public class HomeController {
 
         if (request.getRemoteUser() != null) {
             Employee employee = employeeService.findEmployeeByEmail(request.getRemoteUser());
+            model.addAttribute("user", employee);
 
-            List<Booking> bookings = employee.getBookingList();
-            if (bookings != null) {
-                bookings = checkPassedDates(bookings);
-                model.addAttribute("bookings", bookings);
+            switch (employee.getRole()){
+                case ROLE_USER: {
+                    List<Booking> bookings = employee.getBookingList();
+                    if (bookings != null) {
+                        bookings = checkPassedDates(bookings);
+                        model.addAttribute("bookings", bookings);
+                    }
+                    break;
+                }
+                case ROLE_ADMIN:{
+                    List<Booking> bookings = bookingService.findAll();
+                    if (bookings != null) {
+                        bookings = checkPassedDates(bookings);
+                        model.addAttribute("bookings", bookings);
+                    }
+                    break;
+                }
             }
+
         }
 
 //            if(user.getRole() == Role.ROLE_ADMIN){
@@ -96,6 +110,26 @@ public class HomeController {
         try{
             bookingService.update(booking_id, BookingStatus.CANCELED);
             return "redirect:/home#myReservations";
+        }catch (BookingNotFoundException exception) {
+            return "redirect:/home#myReservations?error=true";
+        }
+    }
+
+    @GetMapping("/accept-booking/{booking_id}")
+    public String acceptReservation(@PathVariable int booking_id) {
+        try{
+            bookingService.update(booking_id, BookingStatus.ACCEPTED);
+            return "redirect:/home#requests";
+        }catch (BookingNotFoundException exception) {
+            return "redirect:/home#myReservations?error=true";
+        }
+    }
+
+    @GetMapping("/reject-booking/{booking_id}")
+    public String rejectReservation(@PathVariable int booking_id) {
+        try{
+            bookingService.update(booking_id, BookingStatus.REJECTED);
+            return "redirect:/home#requests";
         }catch (BookingNotFoundException exception) {
             return "redirect:/home#myReservations?error=true";
         }

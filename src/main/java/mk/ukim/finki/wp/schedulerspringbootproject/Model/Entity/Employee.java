@@ -88,6 +88,6 @@ public class Employee implements UserDetails {
 
     @Override
     public String toString() {
-        return "email='" + email;
+        return String.format("%s %s", name, surname);
     }
 }
