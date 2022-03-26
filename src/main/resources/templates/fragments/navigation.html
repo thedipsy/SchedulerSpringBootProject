@@ -27,6 +27,7 @@
                     </li>
 
                     <!--bookings-->
+                    <th:block sec:authorize="hasRole('ROLE_USER')">
                     <li class="nav-item dropdown">
                         <a aria-expanded="false" aria-haspopup="true"
                            class="nav-link dropdown-toggle page-scroll" id="navbarDropdown1" href="/home#booking">Bookings</a>
@@ -37,6 +38,28 @@
                             <a class="item-text" href="/home#myReservations">My Bookings</a>
                         </div>
                     </li>
+                    </th:block>
+
+                    <!--requests-->
+                    <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                        <li class="nav-item">
+                            <a class="nav-link page-scroll" href="/home#requests">Requests</a>
+                        </li>
+                    </th:block>
+
+                    <!--bookings-->
+                    <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                        <li class="nav-item dropdown">
+                            <a aria-expanded="false" aria-haspopup="true"
+                               class="nav-link dropdown-toggle page-scroll" id="navbarDropdown2" href="/employees">Employees</a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <Link class="dropdown-item">
+                                <a class="item-text" href="/employees#addEmployee">Add new employee!</a>
+                                <Link class="dropdown-item">
+                                <a class="item-text" href="/employees#employees">All employees</a>
+                            </div>
+                        </li>
+                    </th:block>
 
                     <!--my-profile-->
                     <li class="nav-item">
