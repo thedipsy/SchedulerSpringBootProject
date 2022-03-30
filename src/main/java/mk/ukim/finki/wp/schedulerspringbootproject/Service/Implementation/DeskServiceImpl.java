@@ -40,7 +40,6 @@ public class DeskServiceImpl implements DeskService {
                .orElseThrow(OfficeNotFoundException::new);
 
        Desk desk = new Desk(deskDto.getOrdinalNumber(), office);
-
        return deskRepository.save(desk);
     }
 

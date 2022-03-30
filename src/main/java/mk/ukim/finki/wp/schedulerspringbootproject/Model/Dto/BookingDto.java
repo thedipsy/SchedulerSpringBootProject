@@ -4,8 +4,6 @@ import lombok.Data;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus;
 
 import java.time.LocalDate;
-import java.util.Date;
-
 @Data
 public class BookingDto {
 

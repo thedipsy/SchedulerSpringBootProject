@@ -29,12 +29,18 @@ public class CustomUsernamePasswordAuthenticationProvider implements Authenticat
         if (username.isEmpty() || password.isEmpty()) {
             throw new BadCredentialsException("Invalid Credentials");
         }
+
         UserDetails userDetails = employeeService.loadUserByUsername(username);
 
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new BadCredentialsException("Password is incorrect!");
         }
-        return new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
+
+        return new UsernamePasswordAuthenticationToken(
+                userDetails,
+                userDetails.getPassword(),
+                userDetails.getAuthorities()
+        );
     }
 
     @Override

@@ -12,5 +12,4 @@ public class DeskDto {
         this.ordinalNumber = ordinalNumber;
         this.officeId = officeId;
     }
-
 }

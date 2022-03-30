@@ -14,11 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 public class ProfileController {
 
     private final EmployeeService employeeService;
-    private final PasswordEncoder passwordEncoder;
 
     public ProfileController(EmployeeService employeeService, PasswordEncoder passwordEncoder) {
         this.employeeService = employeeService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping

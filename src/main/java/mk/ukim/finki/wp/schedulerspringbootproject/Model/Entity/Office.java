@@ -26,9 +26,4 @@ public class Office {
         this.deskList = new ArrayList<>();
     }
 
-//    public Office(int ordinalNumber, List<Desk> deskList) {
-//        this.ordinalNumber = ordinalNumber;
-//        this.deskList = deskList;
-//    }
-
 }
