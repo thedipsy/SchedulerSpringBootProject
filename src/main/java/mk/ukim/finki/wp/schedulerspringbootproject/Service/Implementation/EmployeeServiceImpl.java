@@ -1,8 +1,8 @@
 package mk.ukim.finki.wp.schedulerspringbootproject.Service.Implementation;
 
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Booking;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Desk;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Employee;
-import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.Role;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.EmailAlreadyUsedException;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.IncorrectPasswordException;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.InvalidUsernameOrPasswordException;
@@ -10,6 +10,8 @@ import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.PasswordsDoNo
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Dto.EmployeeDto;
 import mk.ukim.finki.wp.schedulerspringbootproject.Repository.BookingRepository;
 import mk.ukim.finki.wp.schedulerspringbootproject.Repository.EmployeeRepository;
+import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.DeskService;
+import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.EmailService;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.EmployeeService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,29 +19,35 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Random;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final BookingRepository bookingRepository;
+    private final DeskService deskService;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, BookingRepository bookingRepository, PasswordEncoder passwordEncoder) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, BookingRepository bookingRepository, DeskService deskService, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.employeeRepository = employeeRepository;
         this.bookingRepository = bookingRepository;
+        this.deskService = deskService;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     @Override
-    public Employee register(EmployeeDto employeeDto, String repeatPassword) throws PasswordsDoNotMatchException, InvalidUsernameOrPasswordException {
-        if(employeeDto.getEmail() == null || employeeDto.getEmail().isEmpty() ||
-                employeeDto.getPassword() == null || employeeDto.getPassword().isEmpty()){
-            throw new InvalidUsernameOrPasswordException();
-        }
+    public List<Employee> findAll() {
+        return employeeRepository.findAll();
+    }
 
-        if(!employeeDto.getPassword().equals(repeatPassword)){
-            throw new PasswordsDoNotMatchException();
+    @Override
+    public Employee registerEmployee(EmployeeDto employeeDto) throws PasswordsDoNotMatchException, InvalidUsernameOrPasswordException {
+        if(employeeDto.getEmail() == null || employeeDto.getEmail().isEmpty()){
+            throw new InvalidUsernameOrPasswordException();
         }
 
         if(employeeRepository.findByEmail(employeeDto.getEmail()).isPresent()){
@@ -47,7 +55,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         //generate password
-        String encodedPassword = passwordEncoder.encode(employeeDto.getPassword());
+        String generatedPassword = generatePassword();
+        String encodedPassword = passwordEncoder.encode(generatedPassword);
 
         Employee employee = new Employee(
                 employeeDto.getEmail(),
@@ -55,10 +64,26 @@ public class EmployeeServiceImpl implements EmployeeService {
                 employeeDto.getName(),
                 employeeDto.getSurname(),
                 employeeDto.getPhone(),
-                Role.ROLE_USER
+                employeeDto.getRole()
         );
+        employeeRepository.save(employee);
 
-        return employeeRepository.save(employee);
+        //Send password via email only if the registering had succeeded
+        String body = "Welcome!\nYou are now registered on Work Scheduler.\nTo login use the following generated password " + generatedPassword +
+                "\nPlease change the password once you log in for security reasons.";
+        emailService.sendEmail(employeeDto.getEmail(), body,"My Work Scheduler Password" );
+        return employee;
+    }
+
+    public static String generatePassword() {
+        String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        Random rnd = new Random();
+
+        StringBuilder sb = new StringBuilder(10);
+        for (int i = 0; i < 10; i++) {
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        }
+        return sb.toString();
     }
 
     @Override
@@ -101,6 +126,20 @@ public class EmployeeServiceImpl implements EmployeeService {
         String encodedPassword = passwordEncoder.encode(new_password);
         employee.setPassword(encodedPassword);
         employeeRepository.save(employee);
+    }
+
+    @Override
+    public Employee assignDesk(String employee_id, int desk_id) {
+        Desk desk = deskService.findById(desk_id);
+        Employee employee = employeeRepository.findByEmail(employee_id)
+                        .orElseThrow(() -> new UsernameNotFoundException(employee_id));
+        employee.setDesk(desk);
+        return employeeRepository.save(employee);
+    }
+
+    @Override
+    public void deleteEmployee(String employee_id) {
+        employeeRepository.deleteById(employee_id);
     }
 
 }

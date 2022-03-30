@@ -86,28 +86,20 @@
                                             </thead>
                                             <tbody>
                                             <th:block th:each="booking: ${bookings}">
-                                                <tr>
+                                                <tr th:if="${booking.getStatus() == T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).PENDING}">
                                                     <td th:text="${booking.getEmployee()}"></td>
                                                     <td th:text="${booking.getBookedDate()}"></td>
                                                     <td th:text="${booking.getStatus()}"></td>
                                                     <td>
                                                         <a
-                                                           th:href="@{'/home/accept-booking/{booking_id}' (booking_id=${booking.getBookingId()})}"
-                                                           th:if="${booking.getStatus() != T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).CANCELED &&
-                                                                booking.getStatus() != T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).EXPIRED}"
-                                                           th:method="GET">
-                                                            <i class="btn btn-sm btn-info red-background"
-                                                               th:if="${booking.getStatus() == T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).PENDING ||
-                                                                booking.getStatus() == T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).REJECTED}" th:text="Accept"></i>
+                                                                th:href="@{'/home/accept-booking/{booking_id}' (booking_id=${booking.getBookingId()})}">
+                                                            <i class="btn btn-sm btn-info red-background" >Accept</i>
                                                         </a>
+                                                    </td>
+                                                    <td>
                                                         <a
-                                                           th:href="@{'/home/reject-booking/{booking_id}' (booking_id=${booking.getBookingId()})}"
-                                                           th:if="${booking.getStatus() != T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).CANCELED &&
-                                                                booking.getStatus() != T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).EXPIRED}"
-                                                           th:method="GET">
-                                                            <i class="btn btn-sm btn-info red-background"
-                                                               th:if="${booking.getStatus() == T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).PENDING ||
-                                                                booking.getStatus() == T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).ACCEPTED}" th:text="Reject"></i>
+                                                                th:href="@{'/home/reject-booking/{booking_id}' (booking_id=${booking.getBookingId()})}">
+                                                            <i class="btn btn-sm btn-info red-background" >Reject</i>
                                                         </a>
                                                     </td>
 
@@ -133,6 +125,36 @@
             </header>
         </div>
     </th:block>
+
+<!--    <th:block th:each="booking: ${bookings}">-->
+<!--        <tr>-->
+<!--            <td th:text="${booking.getEmployee()}"></td>-->
+<!--            <td th:text="${booking.getBookedDate()}"></td>-->
+<!--            <td th:text="${booking.getStatus()}"></td>-->
+<!--            <td>-->
+<!--                <a-->
+<!--                        th:href="@{'/home/accept-booking/{booking_id}' (booking_id=${booking.getBookingId()})}"-->
+<!--                        th:if="${booking.getStatus() != T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).CANCELED &&-->
+<!--                                                                booking.getStatus() != T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).EXPIRED}"-->
+<!--                        th:method="GET">-->
+<!--                    <i class="btn btn-sm btn-info red-background"-->
+<!--                       th:if="${booking.getStatus() == T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).PENDING ||-->
+<!--                                                                booking.getStatus() == T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).REJECTED}" th:text="Accept"></i>-->
+<!--                </a>-->
+<!--                <a-->
+<!--                        th:href="@{'/home/reject-booking/{booking_id}' (booking_id=${booking.getBookingId()})}"-->
+<!--                        th:if="${booking.getStatus() != T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).CANCELED &&-->
+<!--                                                                booking.getStatus() != T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).EXPIRED}"-->
+<!--                        th:method="GET">-->
+<!--                    <i class="btn btn-sm btn-info red-background"-->
+<!--                       th:if="${booking.getStatus() == T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).PENDING ||-->
+<!--                                                                booking.getStatus() == T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).ACCEPTED}" th:text="Reject"></i>-->
+<!--                </a>-->
+<!--            </td>-->
+
+<!--        </tr>-->
+<!--    </th:block>-->
+
 
     <!--    Employee's bookings -->
 

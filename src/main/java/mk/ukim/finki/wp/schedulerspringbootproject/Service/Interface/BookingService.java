@@ -13,5 +13,5 @@ public interface BookingService {
     Booking findById(int id);
     Booking save(BookingDto bookingDto);
     void deleteById(int id);
-    Optional<Booking> update(int booking_id, BookingStatus canceled);
+    Optional<Booking> updateStatus(int booking_id, BookingStatus canceled);
 }

@@ -723,7 +723,7 @@ input[type='checkbox'] {
     opacity: 0.8;
     text-decoration: none;
     transition: all 0.2s ease;
-    font-size: large;
+    font-size: medium;
 }
 
 /*.navbar-custom .nav-item .nav-link:hover,*/
@@ -2414,7 +2414,7 @@ button[type="submit"]:hover {
 }
 
 .labels {
-    font-size: 15px
+    font-size: 15px;
 }
 
 .dark-text-color {
@@ -2442,6 +2442,7 @@ button[type="submit"]:hover {
     background-color: #f06c5c;
     color: #fff;
     font: 700 0.875rem/0 "Open Sans", sans-serif;
+    font-size: medium;
     cursor: pointer;
     transition: all 0.2s;
 }

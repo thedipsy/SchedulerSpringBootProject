@@ -17,7 +17,7 @@ public class Desk {
     @ManyToOne
     private Office office;
 
-    @OneToOne
+    @OneToOne (mappedBy="desk")
     private Employee employee;
 
     public Desk() {
@@ -28,6 +28,16 @@ public class Desk {
         this.office = office;
     }
 
+    public Desk(int ordinalNumber, Office office, Employee employee) {
+        this.ordinalNumber = ordinalNumber;
+        this.office = office;
+        this.employee = employee;
+    }
+
+    @Override
+    public String toString() {
+        return "desk";
+    }
 }
 
 

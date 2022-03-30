@@ -9,49 +9,28 @@ import mk.ukim.finki.wp.schedulerspringbootproject.Model.Dto.BookingDto;
 import mk.ukim.finki.wp.schedulerspringbootproject.Repository.BookingRepository;
 import mk.ukim.finki.wp.schedulerspringbootproject.Repository.EmployeeRepository;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.BookingService;
+import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.EmailService;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Book;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final EmployeeRepository employeeRepository;
+    private final EmailService emailService;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, EmployeeRepository employeeRepository) {
+    public BookingServiceImpl(BookingRepository bookingRepository, EmployeeRepository employeeRepository, EmailService emailService) {
         this.bookingRepository = bookingRepository;
         this.employeeRepository = employeeRepository;
+        this.emailService = emailService;
     }
 
     @Override
     public List<Booking> findAll() {
-        List<Booking> bookings = bookingRepository.findAll();
-        bookings = checkPassedDates(bookings);
-        return bookings;
-    }
-
-    private List<Booking> checkPassedDates(List<Booking> bookings) {
-        return bookings.stream()
-                .peek(b -> {
-                        if(LocalDate.now().isAfter(b.getBookedDate())){
-                            switch (b.getStatus()){
-                                case ACCEPTED:
-                                    b.setStatus(BookingStatus.FINISHED);
-                                    break;
-                                case PENDING:
-                                    b.setStatus(BookingStatus.EXPIRED);
-                                    break;
-                            }
-                        }
-                }).collect(Collectors.toList());
+        return bookingRepository.findAll();
     }
 
     @Override
@@ -66,16 +45,23 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new UserNotFoundException(bookingDto.getEmail()));
 
         Booking booking = new Booking(bookingDto.getBookedDate(), employee);
-
         return bookingRepository.save(booking);
     }
 
     @Override
-    public Optional<Booking> update(int bookingId, BookingStatus status) {
+    public Optional<Booking> updateStatus(int bookingId, BookingStatus status) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(BookingNotFoundException::new);
         booking.setStatus(status);
         bookingRepository.save(booking);
+
+        //send email for update of status
+        String to = booking.getEmployee().getEmail();
+        String topic = "Booking Updated!";
+        String body = "Your booking has been updated.\nStatus: " + status;
+
+        emailService.sendEmail(to, topic, body);
+
         return Optional.of(booking);
     }
 

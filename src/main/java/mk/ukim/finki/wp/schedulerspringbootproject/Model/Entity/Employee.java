@@ -2,7 +2,6 @@ package mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity;
 
 import lombok.Data;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.Role;
-import org.hibernate.annotations.Fetch;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -24,12 +23,13 @@ public class Employee implements UserDetails {
     private String phone;
 
     @OneToOne
+    @JoinColumn (name="deskId")
     private Desk desk;
 
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade={CascadeType.PERSIST})
     //@JsonIgnore
     private List<Booking> bookingList;
 
@@ -45,6 +45,19 @@ public class Employee implements UserDetails {
         this.role = role;
         this.bookingList = new ArrayList<>();
     }
+
+    public Employee(String email, String password, String name, String surname, String phone, Role role, Desk desk) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
+        this.phone = phone;
+        this.role = role;
+        this.desk = desk;
+        this.bookingList = new ArrayList<>();
+    }
+
+
 
     //----------------------- USER DETAILS SECTION ---------------------------------
     private boolean isAccountNonExpired = true;
