@@ -23,17 +23,27 @@ public class DeskServiceImpl implements DeskService {
         this.officeRepository = officeRepository;
     }
 
+    /**
+     * Returns all desks
+     */
     @Override
     public List<Desk> findAll() {
         return deskRepository.findAll();
     }
 
+    /**
+     * Returns a desk by its id
+     */
     @Override
     public Desk findById(int id) {
         return deskRepository.findById(id)
                 .orElseThrow(DeskNotFoundException::new);
     }
 
+    /**
+     * Saves a desk in a specified office
+     * Throws an exception if the office is not found
+     */
     @Override
     public Desk save(DeskDto deskDto) {
        Office office = officeRepository.findById(deskDto.getOfficeId())
@@ -43,6 +53,9 @@ public class DeskServiceImpl implements DeskService {
        return deskRepository.save(desk);
     }
 
+    /**
+     * Deletes a desk by its id
+     */
     @Override
     public void deleteById(int id) {
         deskRepository.deleteById(id);

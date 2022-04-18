@@ -18,6 +18,10 @@ public class ScheduledTasks {
         this.bookingService = bookingService;
     }
 
+    /**
+     * Scheduled task that executes every day at 10pm
+     * The purpose is to find all pending requests on a date that has passed, and it marks it as "expired"
+     */
     @Scheduled(cron = "0 00 22 * * ?") //updateStatus pending expired bookings every day at 10pm
     public void updateExpiredBookings() {
         List<Booking> bookings = bookingService.findAll();
@@ -30,6 +34,10 @@ public class ScheduledTasks {
                 });
     }
 
+    /**
+     * Scheduled task that executes every day at 8am
+     * Purpose is to find all accepted bookings that are on today's date and to mark them as "in progress" (active)
+     */
     @Scheduled(cron = "0 0 08 * * ?") //updateStatus accepted bookings on current day every day at 8am
     public void updateInProgressBookings(){
         List<Booking> bookings = bookingService.findAll();
@@ -43,6 +51,10 @@ public class ScheduledTasks {
                 });
     }
 
+    /**
+     * Scheduled task that executes every day at 4pm
+     * Purpose is to find all in progress bookings and to mark them as finished
+     */
     @Scheduled(cron = "0 0 16 * * ?") //updateStatus finished bookings every day at 4pm
     public void updateFinishedBookings(){
         List<Booking> bookings = bookingService.findAll();
@@ -55,6 +67,11 @@ public class ScheduledTasks {
                 });
     }
 
+    /**
+     * Method that returns true if the booked date from the booking has passed, returns false if the date is in the future
+     * @param b
+     * @return
+     */
     private boolean hasDatePassed(Booking b) {
         return LocalDate.now().isAfter(b.getBookedDate());
     }

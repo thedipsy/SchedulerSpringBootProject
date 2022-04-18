@@ -14,6 +14,11 @@ public class EmailServiceImpl implements EmailService {
         this.javaMailSender = javaMailSender;
     }
 
+    /**
+     * Sending a mail using JavaMailSender
+     * Purpose is to inform the employee of some changes that affects them
+     * Mail is send from our email account
+     */
     public void sendEmail(String to, String topic, String body){
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         String fromEmail = "wp.workscheduler@gmail.com";

@@ -1,11 +1,15 @@
-<nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top" xmlns:th="http://www.w3.org/1999/html">
     <div class="container">
 
         <a class="navbar-brand logo-image">
             <!--            logo-->
             <img th:src="@{/img/logo.png}" alt="Logo" src="../../static/img/logo.png"/>&emsp;&emsp;
             <!--            email of the authenticated user-->
-            <th:block th:if="${#request.getRemoteUser() != null}" th:text="${#request.getRemoteUser()}">
+            <th:block th:if="${#request.getRemoteUser() != null}">
+               <th:span th:style="'color: #E2D784;'" th:text="${#request.getRemoteUser()}">
+
+               </th:span>
+            </th:block>
             </th:block>
         </a>
 
@@ -26,7 +30,7 @@
                                 class="sr-only">(current)</span></a>
                     </li>
 
-                    <!--bookings-->
+                    <!--user bookings-->
                     <th:block sec:authorize="hasRole('ROLE_USER')">
                     <li class="nav-item dropdown">
                         <a aria-expanded="false" aria-haspopup="true"
@@ -41,14 +45,21 @@
 
                     </th:block>
 
-                    <!--requests-->
+                    <!--admin bookings-->
                     <th:block sec:authorize="hasRole('ROLE_ADMIN')">
-                        <li class="nav-item">
-                            <a class="nav-link page-scroll" href="/home#requests">Requests</a>
+                        <li class="nav-item dropdown">
+                            <a aria-expanded="false" aria-haspopup="true"
+                               class="nav-link dropdown-toggle page-scroll" id="navbarDropdown1" href="/home#booking">Bookings</a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <Link class="dropdown-item">
+                                <a class="nav-link page-scroll" href="/home#overview">Overview</a>
+                                <Link class="dropdown-item">
+                                <a class="nav-link page-scroll" href="/home#requests">Requests</a>
+                            </div>
                         </li>
                     </th:block>
 
-                    <!--bookings-->
+                    <!--employees-->
                     <th:block sec:authorize="hasRole('ROLE_ADMIN')">
                         <li class="nav-item dropdown">
                             <a aria-expanded="false" aria-haspopup="true"
@@ -63,6 +74,10 @@
 
                         <li class="nav-item">
                             <a class="nav-link page-scroll" href="/offices">Offices</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link page-scroll" href="/desks">Desks</a>
                         </li>
                     </th:block>
 
@@ -79,6 +94,12 @@
                     </li>
                 </th:block>
 
+                <!--navbar title login-->
+                <th:block th:if="${#request.getRemoteUser() == null}">
+                    <h3 class="nav-title">Work Scheduler</h3>
+                </th:block>
+
+                <!--translation-->
 <!--                &lt;!&ndash;                languages&ndash;&gt;-->
 <!--                &ensp;-->
 <!--                <li class="nav-item">-->

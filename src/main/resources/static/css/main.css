@@ -1791,12 +1791,6 @@ a:hover.back-to-top {
 /* Min-width width 992px */
 @media (min-width: 992px) {
 
-    /* Navigation */
-    .navbar-custom {
-        padding: 1rem 1.5rem 2.125rem 2rem;
-        background: transparent;
-        box-shadow: none;
-    }
 
     .navbar-custom .navbar-nav {
         margin-top: 0;
@@ -2449,4 +2443,18 @@ button[type="submit"]:hover {
 .red-button:hover {
     background-color: #c0564a;
     color: white;
+}
+
+.nav-title {
+    font-family: Roboto;
+    color: #E2D784;
+}
+
+.table-custom{
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.table-custom th td {
+    padding: 15px 50px;
 }

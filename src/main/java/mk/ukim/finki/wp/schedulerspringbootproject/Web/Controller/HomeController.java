@@ -1,8 +1,8 @@
 package mk.ukim.finki.wp.schedulerspringbootproject.Web.Controller;
 
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Booking;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Employee;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus;
-import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.Role;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.BookingNotFoundException;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.BookingService;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.EmployeeService;
@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value={"/","/home"})
@@ -25,12 +27,20 @@ public class HomeController {
         this.bookingService = bookingService;
     }
 
+    /**
+     * GET Method that represents the home page.
+     * Two perspectives:
+     * -User: lists user's bookings, also a booking form is provided for creating a new booking.
+     * -Admin: lists all bookings, all requests and gives option to accept or decline bookings.
+     */
     @GetMapping
     public String getHomePage(@RequestParam(required = false) String error,
+                              @RequestParam(required = false) String errorMessage,
                               HttpServletRequest request,
                               Model model) {
         if (error != null) {
             model.addAttribute("hasError", true);
+            model.addAttribute("error", errorMessage);
         }
 
         if (request.getRemoteUser() != null) {
@@ -43,6 +53,13 @@ public class HomeController {
                     break;
                 case ROLE_ADMIN:
                     model.addAttribute("bookings", bookingService.findAll());
+                    List<Booking> requests = bookingService.findAll()
+                            .stream()
+                            .filter(r -> r.getStatus() == BookingStatus.PENDING)
+                            .collect(Collectors.toList());
+
+                    model.addAttribute("requests", requests);
+                    break;
             }
         }
 
@@ -50,6 +67,10 @@ public class HomeController {
         return "master-template";
     }
 
+    /**
+     * POST Mapping that allows users to make a new booking.
+     *
+     */
     @PostMapping("/book")
     public String makeBooking(HttpServletRequest request,
                                   @RequestParam String date) {
@@ -64,37 +85,46 @@ public class HomeController {
 
             return "redirect:/home#myReservations";
         } catch (Exception e) {
-            return "redirect:/home?error=true#reserve";
+            return "redirect:/home#reserve?error=true&errorMessage=" + e.getMessage();
         }
     }
 
+    /**
+     * GET Mapping for admin canceling employee's booking.
+     */
     @GetMapping("/cancel-booking/{booking_id}")
     public String cancelReservation(@PathVariable int booking_id) {
         try{
             bookingService.updateStatus(booking_id, BookingStatus.CANCELED);
             return "redirect:/home#myReservations";
-        }catch (BookingNotFoundException exception) {
-            return "redirect:/home#myReservations?error=true";
+        }catch (BookingNotFoundException e) {
+            return "redirect:/home#myReservations?error=true&errorMessage" + e.getMessage();
         }
     }
 
+    /**
+     * GET Mapping for admin accepting employee's booking.
+     */
     @GetMapping("/accept-booking/{booking_id}")
     public String acceptReservation(@PathVariable int booking_id) {
         try{
             bookingService.updateStatus(booking_id, BookingStatus.ACCEPTED);
             return "redirect:/home#requests";
-        }catch (BookingNotFoundException exception) {
-            return "redirect:/home#myReservations?error=true";
+        }catch (BookingNotFoundException e) {
+            return "redirect:/home#myReservations?error=true&errorMessage=" + e.getMessage();
         }
     }
 
+    /**
+     * GET Mapping for admin rejecting employee's booking.
+     */
     @GetMapping("/reject-booking/{booking_id}")
     public String rejectReservation(@PathVariable int booking_id) {
         try{
             bookingService.updateStatus(booking_id, BookingStatus.REJECTED);
             return "redirect:/home#requests";
-        }catch (BookingNotFoundException exception) {
-            return "redirect:/home#myReservations?error=true";
+        }catch (BookingNotFoundException e) {
+            return "redirect:/home#myReservations?error=true&errorMessage=" + e.getMessage();
         }
     }
 

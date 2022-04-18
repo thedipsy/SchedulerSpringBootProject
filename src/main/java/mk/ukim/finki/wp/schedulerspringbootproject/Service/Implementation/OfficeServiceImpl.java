@@ -18,17 +18,26 @@ public class OfficeServiceImpl implements OfficeService {
         this.officeRepository = officeRepository;
     }
 
+    /**
+     * Returns all offices
+     */
     @Override
     public List<Office> findAll() {
         return officeRepository.findAll();
     }
 
+    /**
+     * Returns an office by its id
+     */
     @Override
     public Office findById(int id) {
         return officeRepository.findById(id)
                 .orElseThrow(OfficeNotFoundException::new);
     }
 
+    /**
+     * Saves a new office to database
+     */
     @Override
     public Office save(OfficeDto officeDto) {
         Office office = new Office(officeDto.getOrdinalNumber());
@@ -36,6 +45,9 @@ public class OfficeServiceImpl implements OfficeService {
         return officeRepository.save(office);
     }
 
+    /**
+     * Deletes an office by its id
+     */
     @Override
     public void deleteById(int id) {
         officeRepository.deleteById(id);

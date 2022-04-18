@@ -13,14 +13,20 @@ import javax.servlet.http.HttpServletRequest;
 public class LoginController {
 
 
+    /**
+     * GET Method that returns a view for a login form
+     */
     @GetMapping
     public String getLoginPage(@RequestParam(required = false) String error,
+                               @RequestParam(required = false) String errorMessage,
                                HttpServletRequest request,
                                Model model) {
 
         if(error != null){
             model.addAttribute("hasError", true);
+            model.addAttribute("error", errorMessage);
         }
+
         if(request.getRemoteUser() != null){
             return "redirect:/home";
         }

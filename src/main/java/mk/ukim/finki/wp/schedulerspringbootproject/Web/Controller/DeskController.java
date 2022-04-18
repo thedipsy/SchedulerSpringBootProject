@@ -24,7 +24,12 @@ public class DeskController {
         this.deskService = deskService;
         this.employeeService = employeeService;
     }
-    
+
+    /**
+     * GET Method that returns a view about the desks in our company.
+     * Represents all desks, their offices and their assigned employee (optional).
+     * If a desk has not been assigned to an employee, it will be represented as "Not assigned".
+     */
     @GetMapping
     public String getDesksPage(@RequestParam(required = false) String error,
                                  @RequestParam(required = false) String errorMessage,
@@ -42,6 +47,10 @@ public class DeskController {
         return "master-template";
     }
 
+    /**
+     * POST Method that saves the desk to the selected office.
+     * Optionally, if an employee is passed as a parameter, it assigns the desk to the given employee.
+     */
     @PostMapping("/addDesk")
     public String createDesk(@RequestParam int ordinal_number,
                              @RequestParam int office_id,
@@ -61,6 +70,9 @@ public class DeskController {
         }
     }
 
+    /**
+     * DELETE Method that deletes the given desk and refreshes the page.
+     */
     @GetMapping("/delete-desk/{desk_id}")
     public String deleteDesk(@PathVariable int desk_id){
         try{

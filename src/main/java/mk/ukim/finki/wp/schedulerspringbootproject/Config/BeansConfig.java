@@ -8,6 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class BeansConfig {
 
+    /**
+     * Creates a PasswordEncoder that is used to encrypt the credentials before saving to database
+     * @return
+     */
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder(10);

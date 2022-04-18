@@ -3,10 +3,7 @@ package mk.ukim.finki.wp.schedulerspringbootproject.Service.Implementation;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Booking;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Desk;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Employee;
-import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.EmailAlreadyUsedException;
-import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.IncorrectPasswordException;
-import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.InvalidUsernameOrPasswordException;
-import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.PasswordsDoNotMatchException;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.*;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Dto.EmployeeDto;
 import mk.ukim.finki.wp.schedulerspringbootproject.Repository.BookingRepository;
 import mk.ukim.finki.wp.schedulerspringbootproject.Repository.EmployeeRepository;
@@ -39,11 +36,19 @@ public class EmployeeServiceImpl implements EmployeeService {
         this.emailService = emailService;
     }
 
+    /**
+     * Returns all employees
+     */
     @Override
     public List<Employee> findAll() {
         return employeeRepository.findAll();
     }
 
+    /**
+     * Admin can register an employee with a random generated password.
+     * Employee receives the password via the mail that is registered to.
+     * Throws an exception if email is invalid or if the email is already registered.
+     */
     @Override
     public Employee registerEmployee(EmployeeDto employeeDto) throws PasswordsDoNotMatchException, InvalidUsernameOrPasswordException {
         if(employeeDto.getEmail() == null || employeeDto.getEmail().isEmpty()){
@@ -75,6 +80,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employee;
     }
 
+    /**
+     * Returns a 10 characters random generated password containing 0-9, a-z, A-Z
+     * @return
+     */
     public static String generatePassword() {
         String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         Random rnd = new Random();
@@ -86,24 +95,39 @@ public class EmployeeServiceImpl implements EmployeeService {
         return sb.toString();
     }
 
+    /**
+     * Returns UserDetails object of an employee registered with email sent as a parameter
+     * Used for authentication
+     */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(email));
     }
 
+    /**
+     * Returns an employee with specified email
+     */
     @Override
     public Employee findEmployeeByEmail(String email) throws UsernameNotFoundException {
         return employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(email));
     }
 
+    /**
+     * Saves a booking for the selected employee on the given date
+     */
     @Override
     public void makeBooking(Employee employee, LocalDate date) {
         Booking booking = new Booking(date, employee);
         bookingRepository.save(booking);
     }
 
+    /**
+     * Method used for changing employee's password, updating the employee
+     * Throws an exception if the old password is not correct
+     * Throws an exception if the new passwords do not match
+     */
     @Override
     public void changePassword(Employee employee, String old_password, String new_password, String confirm_password) {
         if(old_password == null || old_password.isEmpty() ||
@@ -128,11 +152,19 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.save(employee);
     }
 
+    /**
+     * Method used for assigning specific desk to a specific user
+     * Each user can have one desk, and each desk can belong to one user
+     * Throws an exception if the desk is already assigned to another employee
+     */
     @Override
     public Employee assignDesk(String employee_id, int desk_id) {
-        Desk desk = deskService.findById(desk_id);
         Employee employee = employeeRepository.findByEmail(employee_id)
                         .orElseThrow(() -> new UsernameNotFoundException(employee_id));
+        Desk desk = deskService.findById(desk_id);
+        if(desk.getEmployee() != null){
+            throw new DeskAlreadyAssignedException(desk.getOrdinalNumber());
+        }
         employee.setDesk(desk);
         return employeeRepository.save(employee);
     }

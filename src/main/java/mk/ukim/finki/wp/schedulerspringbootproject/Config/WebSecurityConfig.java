@@ -18,6 +18,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         this.authenticationProvider = authenticationProvider;
     }
 
+    /**
+     * Available paths without authorization are "/register" and resources.
+     * Login page is on path "/login" and when successful it redirects to "/home"
+     * Logout clears the authentication and deletes the token
+     * @param http
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 

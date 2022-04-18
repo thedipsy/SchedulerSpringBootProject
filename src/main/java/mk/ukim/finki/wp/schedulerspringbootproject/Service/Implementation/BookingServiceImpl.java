@@ -28,17 +28,27 @@ public class BookingServiceImpl implements BookingService {
         this.emailService = emailService;
     }
 
+    /**
+     * Returns all bookings
+     */
     @Override
     public List<Booking> findAll() {
         return bookingRepository.findAll();
     }
 
+    /**
+     * Returns a booking by id
+     */
     @Override
     public Booking findById(int id) {
         return bookingRepository.findById(id)
                 .orElseThrow(BookingNotFoundException::new);
     }
 
+    /**
+     * Saves a booking in the database with specified employee
+     * Throws an exception if the employee is not found
+     */
     @Override
     public Booking save(BookingDto bookingDto) {
         Employee employee = employeeRepository.findById(bookingDto.getEmail())
@@ -48,6 +58,9 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.save(booking);
     }
 
+    /**
+     * Updates the status of the booking, and informs the employee by sending a mail via email service
+     */
     @Override
     public Optional<Booking> updateStatus(int bookingId, BookingStatus status) {
         Booking booking = bookingRepository.findById(bookingId)
@@ -65,6 +78,9 @@ public class BookingServiceImpl implements BookingService {
         return Optional.of(booking);
     }
 
+    /**
+     * Deletes a booking by its id
+     */
     @Override
     public void deleteById(int id) {
          bookingRepository.deleteById(id);

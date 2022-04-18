@@ -10,8 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-
 @Controller
 @RequestMapping("/employees")
 public class EmployeeController {
@@ -26,22 +24,30 @@ public class EmployeeController {
         this.deskService = deskService;
     }
 
-
+    /**
+     * GET Method that represents a view with listed employees.
+     * Also, contains a form for registering new employees.
+     */
     @GetMapping
     public String getEmployeesPage(@RequestParam(required = false) String error,
-                              Model model) {
+                                   @RequestParam(required = false) String errorMessage,
+                                  Model model) {
         if (error != null) {
             model.addAttribute("hasError", true);
+            model.addAttribute("error", errorMessage);
         }
 
         model.addAttribute("employees", employeeService.findAll());
         model.addAttribute("desks", deskService.findAll());
 
         model.addAttribute("bodyContent", "employees");
-
         return "master-template";
     }
 
+    /**
+     * POST Method for registering a new employee.
+     * Optionally, if a desk is passed, it assigns that desk to the newly created employee.
+     */
     @PostMapping("/add-employee")
     public String addEmployee(@RequestParam String email,
                               @RequestParam String name,
@@ -57,17 +63,20 @@ public class EmployeeController {
             }
             return "redirect:/employees";
         } catch(Exception e){
-            return "redirect:/employees?error=true";
+            return "redirect:/employees?error=true&errorMessage=" + e.getMessage();
         }
     }
 
+    /**
+     * DELETE Method that deletes the employee by its id (email)
+     */
     @GetMapping("/delete-employee/{employee_id}")
     public String deleteEmployee(@PathVariable String employee_id){
         try{
             employeeService.deleteEmployee(employee_id);
             return "redirect:/employees";
         } catch(Exception e){
-            return "redirect:/employees?error=true";
+            return "redirect:/employees?error=true&errorMessage=" + e.getMessage();
         }
     }
 }
