@@ -31,7 +31,7 @@
                                             <td th:if="${desk.getEmployee() == null}">Not specified</td>
                                             <td>
                                                 <a class="btn btn-sm btn-info red-background"
-                                                   th:href="@{'/offices/delete-desk/{desk_id}' (desk_id=${desk.getDeskId()})}"
+                                                   th:href="@{'/desks/delete-desk/{desk_id}' (desk_id=${desk.getDeskId()})}"
                                                    th:method="GET">
                                                     <i class="fa fa-trash" th:text="Delete"></i>
                                                 </a>
@@ -66,7 +66,7 @@
                     <div class="col-lg-6 col-xl-5">
                         <div class="text-container">
                             <h1>Add Desk</h1>
-                            <form th:action="@{/offices/addDesk}" th:method="POST">
+                            <form th:action="@{/desks/addDesk}" th:method="POST">
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label class="dark-text-color" for="desk_ordinalNumber">Ordinal Number</label>

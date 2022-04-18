@@ -52,7 +52,12 @@ public class HomeController {
                     model.addAttribute("bookings", employee.getBookingList());
                     break;
                 case ROLE_ADMIN:
-                    model.addAttribute("bookings", bookingService.findAll());
+                    List<Booking> bookings =  bookingService.findAll()
+                            .stream()
+                            .filter(b -> b.getStatus() != BookingStatus.PENDING)
+                            .collect(Collectors.toList());
+                    model.addAttribute("bookings", bookings);
+
                     List<Booking> requests = bookingService.findAll()
                             .stream()
                             .filter(r -> r.getStatus() == BookingStatus.PENDING)
@@ -63,7 +68,7 @@ public class HomeController {
             }
         }
 
-        model.addAttribute("bodyContent", "reservation");
+        model.addAttribute("bodyContent", "home");
         return "master-template";
     }
 

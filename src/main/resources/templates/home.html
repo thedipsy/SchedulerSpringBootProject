@@ -62,6 +62,68 @@
         </div>
     </th:block>
 
+    <!--   ADMINS Pending Requests Section-->
+
+    <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+        <div id="requests">
+            <header class="header" id="headerRequests">
+                <div class="header-content">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-6 col-xl-5">
+                                <div class="text-container">
+                                    <h2>Pending requests</h2>
+                                    <th:block th:if="${requests.size() != 0}">
+                                        <table class="table table-dark table-custom">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">Employee</th>
+                                                <th scope="col">Booking Date</th>
+                                                <th scope="col">Status</th>
+                                                <th class="col-4" scope="col"></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <th:block th:each="request: ${requests}">
+                                                <tr th:if="${request.getStatus() == T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).PENDING}">
+                                                    <td th:text="${request.getEmployee()}"></td>
+                                                    <td th:text="${request.getBookedDate()}"></td>
+                                                    <td th:text="${request.getStatus()}"></td>
+                                                    <td>
+                                                        <a
+                                                                th:href="@{'/home/accept-booking/{booking_id}' (booking_id=${request.getBookingId()})}">
+                                                            <i class="btn btn-sm btn-info red-background">Accept</i>
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a
+                                                                th:href="@{'/home/reject-booking/{booking_id}' (booking_id=${request.getBookingId()})}">
+                                                            <i class="btn btn-sm btn-info red-background">Reject</i>
+                                                        </a>
+                                                    </td>
+
+                                                </tr>
+                                            </th:block>
+                                            </tbody>
+                                        </table>
+                                    </th:block>
+
+                                    <th:block th:if="${requests.size() == 0}">
+                                        <div>
+                                            <h5 style="color: #1d2124; opacity: 80%; padding-left: 20px;.">No pending
+                                                requests.</h5>
+                                        </div>
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        </div>
+    </th:block>
+
+
     <!--    ADMINS Bookings Overview-->
     <th:block sec:authorize="hasRole('ROLE_ADMIN')">
         <div id="overview">
@@ -115,69 +177,6 @@
             </header>
         </div>
     </th:block>
-
-
-<!--    Pending Requests Section-->
-
-    <th:block sec:authorize="hasRole('ROLE_ADMIN')">
-        <div id="requests">
-            <header class="header" id="headerRequests">
-                <div class="header-content">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-6 col-xl-5">
-                                <div class="text-container">
-                                    <h2>Pending requests</h2>
-                                    <th:block th:if="${requests.size() != 0}">
-                                        <table class="table table-dark">
-                                            <thead>
-                                            <tr>
-                                                <th scope="col">Employee</th>
-                                                <th scope="col">Booking Date</th>
-                                                <th scope="col">Status</th>
-                                                <th class="col-4" scope="col"></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <th:block th:each="request: ${requests}">
-                                                <tr th:if="${request.getStatus() == T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).PENDING}">
-                                                    <td th:text="${request.getEmployee()}"></td>
-                                                    <td th:text="${request.getBookedDate()}"></td>
-                                                    <td th:text="${request.getStatus()}"></td>
-                                                    <td>
-                                                        <a
-                                                                th:href="@{'/home/accept-booking/{booking_id}' (booking_id=${request.getBookingId()})}">
-                                                            <i class="btn btn-sm btn-info red-background">Accept</i>
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        <a
-                                                                th:href="@{'/home/reject-booking/{booking_id}' (booking_id=${request.getBookingId()})}">
-                                                            <i class="btn btn-sm btn-info red-background">Reject</i>
-                                                        </a>
-                                                    </td>
-
-                                                </tr>
-                                            </th:block>
-                                            </tbody>
-                                        </table>
-                                    </th:block>
-
-                                    <th:block th:if="${requests.size() == 0}">
-                                        <div>
-                                            <h5 style="color: #1d2124; opacity: 80%; padding-left: 20px;.">No pending
-                                                requests.</h5>
-                                        </div>
-                                    </th:block>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </header>
-        </div>
-    </th:block>
-
 
     <!--    Employee's bookings Section -->
 
