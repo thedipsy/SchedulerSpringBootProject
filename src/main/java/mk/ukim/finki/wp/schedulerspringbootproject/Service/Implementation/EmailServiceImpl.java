@@ -1,5 +1,6 @@
 package mk.ukim.finki.wp.schedulerspringbootproject.Service.Implementation;
 
+import mk.ukim.finki.wp.schedulerspringbootproject.Config.Constants;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.EmailService;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,7 +22,7 @@ public class EmailServiceImpl implements EmailService {
      */
     public void sendEmail(String to, String topic, String body){
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        String fromEmail = "wp.workscheduler@gmail.com";
+        String fromEmail = Constants.EMAIL_FROM;
         simpleMailMessage.setFrom(fromEmail);
         simpleMailMessage.setTo(to);
         simpleMailMessage.setSubject(topic);

@@ -29,8 +29,10 @@ public class Employee implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade={CascadeType.PERSIST})
-    //@JsonIgnore
+    @ManyToOne
+    private Company company;
+
+    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade={CascadeType.REMOVE})
     private List<Booking> bookingList;
 
     public Employee() {

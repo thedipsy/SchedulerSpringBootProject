@@ -9,7 +9,7 @@
                         <div class="col-lg-6 col-xl-5">
                             <div class="text-container">
                                 <h2>Employees overview</h2>
-                                <a class="btn-solid-lg page-scroll" href="#addEmployee">Click here to add a new employee.</a>
+                                <a class="btn-solid-lg page-scroll" href="#employeeForm">Click here to add a new employee.</a>
                                 <br/> <br/>
 
                                 <th:block th:if="${employees.size() != 0}">
@@ -20,6 +20,7 @@
                                             <th scope="col">Surname</th>
                                             <th scope="col">Email</th>
                                             <th scope="col">Phone</th>
+                                            <th scope="col">Role</th>
                                             <th scope="col">Office</th>
                                             <th scope="col">Desk</th>
                                             <th class="col-4" scope="col"></th>
@@ -32,15 +33,23 @@
                                                 <td th:text="${employee.getSurname()}"></td>
                                                 <td th:text="${employee.getEmail()}"></td>
                                                 <td th:text="${employee.getPhone()}"></td>
+                                                <td th:text="${employee.getRole()}"></td>
                                                 <td th:if="${employee.getDesk() != null}" th:text="${employee.getDesk().getOffice().getOrdinalNumber()}"></td>
                                                 <td th:if="${employee.getDesk() == null}">Not assigned</td>
                                                 <td th:if="${employee.getDesk() != null}" th:text="${employee.getDesk().getOrdinalNumber()}"></td>
                                                 <td th:if="${employee.getDesk() == null}">Not assigned</td>
                                                 <td>
                                                     <a
+                                                            th:href="@{'/employees/edit-employee/{employee_id}' (employee_id=${employee.getEmail()})}"
+                                                            th:method="GET">
+                                                        <i class="btn btn-sm btn-success">Edit</i>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a
                                                             th:href="@{'/employees/delete-employee/{employee_id}' (employee_id=${employee.getEmail()})}"
                                                             th:method="GET">
-                                                        <i class="btn btn-sm btn-info red-background">Delete</i>
+                                                        <i class="btn btn-sm btn-danger">Delete</i>
                                                     </a>
                                                 </td>
 
@@ -67,46 +76,53 @@
 
 
     <!--    Add employee form-->
-    <header class="header" id="addEmployee">
+    <header class="header" id="employeeForm">
         <div class="header-content">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-6 col-xl-5">
-                        <div class="text-container">
-                            <h2>Add employee</h2>
+                        <div class="form-container dark-background">
+                            <h4>Add employee</h4>
                             <form th:method="POST" th:action="@{/employees/add-employee}">
                                 <div class="form-row">
+                                    <input id="selectedEmployeeId" type="hidden" name="selectedEmployeeId" th:value="(${selectedEmployee} != null ? ${selectedEmployee.getEmail()} : '')">
                                     <div class="form-group col-md-6">
-                                        <label for="inputName" class="dark-text-color">Name</label>
-                                        <input name="name" class="form-control" id="inputName" placeholder="Name" type="text">
+                                        <input name="name" class="form-control" id="inputName" placeholder="Name" type="text" th:value="(${selectedEmployee != null} ? ${selectedEmployee.getName()} : '')">
                                     </div>
 
                                     <div class="form-group col-md-6">
-                                        <label for="inputSurname" class="dark-text-color">Surname</label>
-                                        <input name="surname" class="form-control" id="inputSurname" placeholder="Surname" type="text">
+                                        <input name="surname" class="form-control" id="inputSurname" placeholder="Surname" type="text" th:value="(${selectedEmployee != null} ? ${selectedEmployee.getSurname()} : '')">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="inputEmail" class="dark-text-color">Email</label>
-                                    <input name="email" class="form-control" id="inputEmail" placeholder="Email" type="email">
+                                    <input name="email" class="form-control" id="inputEmail" placeholder="Email" type="email" th:value="(${selectedEmployee != null} ? ${selectedEmployee.getEmail()} : '')">
                                 </div>
                                 <div class="form-group">
-                                    <label for="inputPhone" class="dark-text-color">Phone</label>
-                                    <input name="phone" class="form-control" id="inputPhone" placeholder="Phone" type="text">
+                                    <input name="phone" class="form-control" id="inputPhone" placeholder="Phone" type="text" th:value="(${selectedEmployee != null} ? ${selectedEmployee.getPhone()} : '')">
                                 </div>
                                 <div class="form-group">
-                                    <label for="role" class="dark-text-color">Role</label><br/>
                                     <select name="role" id="role" class="form-control-select">
-                                        <option th:each="role : ${T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.Role).values()}"
+                                        <option th:if="${selectedEmployee != null}"
+                                                th:selected="${selectedEmployee.getRole() == role}"
+                                                th:each="role : ${T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.Role).values()}"
+                                                th:value="${role}" th:text="${role}"></option>
+                                        <option th:if="${selectedEmployee == null}"
+                                                th:each="role : ${T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.Role).values()}"
                                                 th:value="${role}" th:text="${role}"></option>
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="desk_id" class="dark-text-color">Desk</label><br/>
                                     <select class="form-control-select" name="desk_id" id="desk_id">
-                                        <option th:value="-1    ">Not specified</option>
+                                        <option th:value="-1">Select desk</option>
+                                        <option th:if="${selectedEmployee != null && selectedEmployee.getDesk() != null}"
+                                                th:selected="${selectedEmployee.getDesk().getDeskId()}"
+                                                th:value="${selectedEmployee.getDesk().getDeskId()}"
+                                                th:text="${selectedEmployee.getDesk().getOrdinalNumber()}"></option>
+
+                                        <option th:value="-1">Not specified</option>
                                         <option th:each="desk : ${desks}"
-                                                th:value="${desk.getDeskId()}" th:text="${desk.getOrdinalNumber()}"></option>
+                                                th:value="${desk.getDeskId()}"
+                                                th:text="${desk.getOrdinalNumber()}"></option>
                                     </select>
                                 </div>
                                 <button class="red-button" type="submit">Submit</button>

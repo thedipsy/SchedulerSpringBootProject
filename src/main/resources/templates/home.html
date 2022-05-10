@@ -46,7 +46,7 @@
 
                                     <form th:action="@{/home/book}" th:method="POST">
                                         <label class="dark-text-color" for="date">Date:</label>&nbsp;
-                                        <input id="date" name="date" type="date"/>
+                                        <input id="date" name="date" type="date" th:min="${currentDate}"/>
                                         <br/> <br/>
 
                                         <label th:if="${hasError}">*All fields are required.</label></br>
@@ -92,13 +92,13 @@
                                                     <td>
                                                         <a
                                                                 th:href="@{'/home/accept-booking/{booking_id}' (booking_id=${request.getBookingId()})}">
-                                                            <i class="btn btn-sm btn-info red-background">Accept</i>
+                                                            <i class="btn btn-sm btn-success">Accept</i>
                                                         </a>
                                                     </td>
                                                     <td>
                                                         <a
                                                                 th:href="@{'/home/reject-booking/{booking_id}' (booking_id=${request.getBookingId()})}">
-                                                            <i class="btn btn-sm btn-info red-background">Reject</i>
+                                                            <i class="btn btn-sm btn-danger">Reject</i>
                                                         </a>
                                                     </td>
 
@@ -131,7 +131,7 @@
                 <div class="header-content">
                     <div class="container">
                         <div class="row">
-
+                            <div class="col-lg-6 col-xl-5">
                                     <h2>Bookings Overview</h2>
 
 
@@ -154,7 +154,13 @@
                                                         <td th:if="${booking.getStatus() == T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).ACCEPTED}">
                                                             <a
                                                                     th:href="@{'/home/reject-booking/{booking_id}' (booking_id=${booking.getBookingId()})}">
-                                                                <i class="btn btn-sm btn-info red-background">Reject</i>
+                                                                <i class="btn btn-sm btn-danger">Reject</i>
+                                                            </a>
+                                                        </td>
+                                                        <td th:if="${booking.getStatus() == T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).REJECTED}">
+                                                            <a
+                                                                    th:href="@{'/home/accept-booking/{booking_id}' (booking_id=${booking.getBookingId()})}">
+                                                                <i class="btn btn-sm btn-success">Accept</i>
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -172,6 +178,7 @@
                                     </th:block>
                             </div>
                         </div>
+                    </div>
                     </div>
 
             </header>
@@ -207,7 +214,7 @@
                                                     <td th:text="${booking.getStatus()}"></td>
 
                                                     <td>
-                                                        <a class="btn btn-sm btn-info red-background"
+                                                        <a class="btn btn-sm btn-danger"
                                                            th:href="@{'/home/cancel-booking/{booking_id}' (booking_id=${booking.getBookingId()})}"
                                                            th:if="${booking.getStatus() == T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).PENDING ||
                                                                 booking.getStatus() == T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus).ACCEPTED}"

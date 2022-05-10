@@ -1,5 +1,6 @@
 package mk.ukim.finki.wp.schedulerspringbootproject.Web.Controller;
 
+import mk.ukim.finki.wp.schedulerspringbootproject.Config.Constants;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Employee;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.EmployeeService;
 import org.springframework.stereotype.Controller;
@@ -28,16 +29,16 @@ public class ProfileController {
                                  HttpServletRequest request,
                                  Model model) {
         if (error != null) {
-            model.addAttribute("hasError", true);
-            model.addAttribute("error", errorMessage);
+            model.addAttribute(Constants.HAS_ERROR, true);
+            model.addAttribute(Constants.ERROR, errorMessage);
         }
 
         if (request.getRemoteUser() != null) {
             Employee employee = employeeService.findEmployeeByEmail(request.getRemoteUser());
-            model.addAttribute("user", employee);
+            model.addAttribute(Constants.USER, employee);
         }
 
-        model.addAttribute("bodyContent", "profile");
+        model.addAttribute(Constants.BODY_CONTENT, "profile");
         return "master-template";
     }
 

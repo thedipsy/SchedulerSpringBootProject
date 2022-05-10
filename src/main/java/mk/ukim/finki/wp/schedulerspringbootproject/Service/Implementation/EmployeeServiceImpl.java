@@ -1,13 +1,17 @@
 package mk.ukim.finki.wp.schedulerspringbootproject.Service.Implementation;
 
+import mk.ukim.finki.wp.schedulerspringbootproject.Config.Constants;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Booking;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Company;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Desk;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Employee;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.Role;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.*;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Dto.EmployeeDto;
 import mk.ukim.finki.wp.schedulerspringbootproject.Repository.BookingRepository;
+import mk.ukim.finki.wp.schedulerspringbootproject.Repository.CompanyRepository;
+import mk.ukim.finki.wp.schedulerspringbootproject.Repository.DeskRepository;
 import mk.ukim.finki.wp.schedulerspringbootproject.Repository.EmployeeRepository;
-import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.DeskService;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.EmailService;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.EmployeeService;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -24,14 +29,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final BookingRepository bookingRepository;
-    private final DeskService deskService;
+    private final CompanyRepository companyRepository;
+    private final DeskRepository deskRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, BookingRepository bookingRepository, DeskService deskService, PasswordEncoder passwordEncoder, EmailService emailService) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, BookingRepository bookingRepository, CompanyRepository companyRepository, DeskRepository deskRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.employeeRepository = employeeRepository;
         this.bookingRepository = bookingRepository;
-        this.deskService = deskService;
+        this.companyRepository = companyRepository;
+        this.deskRepository = deskRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
     }
@@ -42,6 +49,45 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<Employee> findAll() {
         return employeeRepository.findAll();
+    }
+
+    @Override
+    public Employee registerAdmin(EmployeeDto employeeDto, int company_id, String company_key) {
+        if(employeeDto.getEmail() == null || employeeDto.getEmail().isEmpty()){
+            throw new InvalidUsernameOrPasswordException();
+        }
+
+        Company company = companyRepository.findById(company_id)
+                .orElseThrow(CompanyNotFoundException::new);
+
+        if(!passwordEncoder.matches(company_key, company.getCompanyKey())){
+            throw new InvalidCompanyKeyException();
+        }
+
+        if(employeeRepository.findByEmail(employeeDto.getEmail()).isPresent()){
+            throw new EmailAlreadyUsedException(employeeDto.getEmail());
+        }
+
+        //encode password
+        String encodedPassword = passwordEncoder.encode(employeeDto.getPassword());
+
+        Employee employee = new Employee(
+                employeeDto.getEmail(),
+                encodedPassword,
+                employeeDto.getName(),
+                employeeDto.getSurname(),
+                employeeDto.getPhone(),
+                employeeDto.getRole()
+        );
+
+        employee.setCompany(company);
+        employeeRepository.save(employee);
+
+        //Send password via email only if the registering had succeeded
+        String body = Constants.EMAIL_BODY_WELCOME;
+        String title = Constants.EMAIL_TITLE_WELCOME;
+        emailService.sendEmail(employeeDto.getEmail(), title, body);
+        return employee;
     }
 
     /**
@@ -76,7 +122,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         //Send password via email only if the registering had succeeded
         String body = "Welcome!\nYou are now registered on Work Scheduler.\nTo login use the following generated password " + generatedPassword +
                 "\nPlease change the password once you log in for security reasons.";
-        emailService.sendEmail(employeeDto.getEmail(), body,"My Work Scheduler Password" );
+        emailService.sendEmail(employeeDto.getEmail(), "My Work Scheduler Password", body);
         return employee;
     }
 
@@ -115,7 +161,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /**
-     * Saves a booking for the selected employee on the given date
+     * Saves a request for the selected employee on the given date
      */
     @Override
     public void makeBooking(Employee employee, LocalDate date) {
@@ -152,6 +198,32 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.save(employee);
     }
 
+    @Override
+    public Optional<Employee> edit(String id, String email, String name, String surname, String phone, Role role) {
+        if(email == null || email.isEmpty() || name == null || name.isEmpty() ||
+                surname == null || surname.isEmpty() || phone == null || phone.isEmpty()){
+            //null or empty fields
+            throw new IllegalArgumentException();
+        }
+        Employee employee = employeeRepository.findByEmail(id)
+                .orElseThrow(EmployeeNotFound::new);
+
+        employee.setName(name);
+        employee.setSurname(surname);
+        employee.setPhone(phone);
+        employee.setRole(role);
+
+        if(!employee.getEmail().equals(email)) {
+            if (employeeRepository.findByEmail(email).isEmpty()) {
+                employee.setEmail(email);
+            } else {
+                throw new EmailAlreadyUsedException(email);
+            }
+        }
+
+        return Optional.of(employeeRepository.save(employee));
+    }
+
     /**
      * Method used for assigning specific desk to a specific user
      * Each user can have one desk, and each desk can belong to one user
@@ -161,11 +233,22 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee assignDesk(String employee_id, int desk_id) {
         Employee employee = employeeRepository.findByEmail(employee_id)
                         .orElseThrow(() -> new UsernameNotFoundException(employee_id));
-        Desk desk = deskService.findById(desk_id);
+        Desk desk = deskRepository.findById(desk_id)
+                .orElseThrow(DeskNotFoundException::new);
         if(desk.getEmployee() != null){
             throw new DeskAlreadyAssignedException(desk.getOrdinalNumber());
         }
         employee.setDesk(desk);
+        return employeeRepository.save(employee);
+    }
+
+
+    @Override
+    public Employee deleteDeskFromEmployee(String employee_id) {
+        Employee employee = employeeRepository.findByEmail(employee_id)
+                .orElseThrow(() -> new UsernameNotFoundException(employee_id));
+        employee.setDesk(null);
+
         return employeeRepository.save(employee);
     }
 

@@ -21,9 +21,6 @@ public class Booking {
     @Enumerated(value = EnumType.STRING)
     private BookingStatus status;
 
-    @ManyToOne
-    private Scheduler scheduler;
-
     public Booking() {
     }
 

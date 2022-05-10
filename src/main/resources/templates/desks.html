@@ -1,6 +1,6 @@
 <th:block>
     <!--    Desks-->
-    <header class="header" id="desks">
+    <div class="header" id="desks">
         <div class="header-content">
             <div class="container">
                 <div class="row">
@@ -30,7 +30,14 @@
                                                 th:text="${desk.getEmployee().toString()}"></td>
                                             <td th:if="${desk.getEmployee() == null}">Not specified</td>
                                             <td>
-                                                <a class="btn btn-sm btn-info red-background"
+                                                <a class="btn btn-sm btn-success"
+                                                   th:href="@{'/desks/edit-desk/{desk_id}' (desk_id=${desk.getDeskId()})}"
+                                                   th:method="GET">
+                                                    <i class="fa fa-trash" th:text="Edit"></i>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-sm btn-danger"
                                                    th:href="@{'/desks/delete-desk/{desk_id}' (desk_id=${desk.getDeskId()})}"
                                                    th:method="GET">
                                                     <i class="fa fa-trash" th:text="Delete"></i>
@@ -52,39 +59,46 @@
 
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </header>
 
-
-    <!--                    Add desk form-->
-    <header class="header" id="add-desk">
-        <div class="header-content">
-            <div class="container">
-                <div class="row">
+                    <!--                    Add desk form-->
                     <div class="col-lg-6 col-xl-5">
                         <div class="text-container">
                             <h1>Add Desk</h1>
                             <form th:action="@{/desks/addDesk}" th:method="POST">
                                 <div class="form-row">
-                                    <div class="form-group col-md-6">
+                                    <div class="form-group col-lg-6">
+                                        <input id="id" type="hidden" name="id" th:value="(${selectedDesk} != null ? ${selectedDesk.getDeskId()} : '')">
+
                                         <label class="dark-text-color" for="desk_ordinalNumber">Ordinal Number</label>
                                         <input class="form-control" id="desk_ordinalNumber" name="ordinal_number"
-                                               placeholder="ordinal number"
-                                               type="number">
+                                               placeholder="ordinal number" type="number" th:value="(${selectedDesk} != null ? ${selectedDesk.getOrdinalNumber()} : '')">
 
                                         <label class="dark-text-color" for="office_id">Office</label><br/>
                                         <select class="form-control-select" id="office_id" name="office_id">
-                                            <option th:each="office : ${offices}"
+                                            <option th:if="${selectedDesk} != null"
+                                                    th:selected="${selectedDesk.getOffice() == office.getOfficeId()}"
+                                                    th:each="office : ${offices}"
+                                                    th:text="${office.getOrdinalNumber()}"
+                                                    th:value="${office.getOrdinalNumber()}"></option>
+
+                                            <option th:if="${selectedDesk} == null"
+                                                    th:each="office : ${offices}"
                                                     th:text="${office.getOrdinalNumber()}"
                                                     th:value="${office.getOrdinalNumber()}"></option>
                                         </select>
 
                                         <label class="dark-text-color" for="employee_id">Employee</label><br/>
                                         <select class="form-control-select" id="employee_id" name="employee_id">
+
+
+                                            <option th:if="${selectedDesk} != null"
+                                                    th:selected="${selectedDesk.getEmployee() == employee.getEmail()}"
+                                                    th:each="employee : ${employees}"
+                                                    th:text="${employee.toString()}"
+                                                    th:value="${employee.getEmail()}"></option>
                                             <option th:value="${null}">Not specified</option>
-                                            <option th:each="employee : ${employees}"
+                                            <option th:if="${selectedDesk} == null"
+                                                    th:each="employee : ${employees}"
                                                     th:text="${employee.toString()}"
                                                     th:value="${employee.getEmail()}"></option>
                                         </select>
@@ -100,5 +114,9 @@
                 </div>
             </div>
         </div>
-    </header>
+    </div>
+
+
+
+
 </th:block>

@@ -1,5 +1,6 @@
 package mk.ukim.finki.wp.schedulerspringbootproject.Web.Controller;
 
+import mk.ukim.finki.wp.schedulerspringbootproject.Config.Constants;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Booking;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Employee;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value={"/","/home"})
@@ -39,36 +39,30 @@ public class HomeController {
                               HttpServletRequest request,
                               Model model) {
         if (error != null) {
-            model.addAttribute("hasError", true);
-            model.addAttribute("error", errorMessage);
+            model.addAttribute(Constants.HAS_ERROR, true);
+            model.addAttribute(Constants.ERROR, errorMessage);
         }
 
         if (request.getRemoteUser() != null) {
             Employee employee = employeeService.findEmployeeByEmail(request.getRemoteUser());
-            model.addAttribute("user", employee);
+            model.addAttribute(Constants.USER, employee);
 
             switch (employee.getRole()) {
                 case ROLE_USER:
-                    model.addAttribute("bookings", employee.getBookingList());
+                    model.addAttribute(Constants.BOOKINGS, employee.getBookingList());
+                    model.addAttribute(Constants.CURRENT_DATE, LocalDate.now());
                     break;
                 case ROLE_ADMIN:
-                    List<Booking> bookings =  bookingService.findAll()
-                            .stream()
-                            .filter(b -> b.getStatus() != BookingStatus.PENDING)
-                            .collect(Collectors.toList());
-                    model.addAttribute("bookings", bookings);
+                    List<Booking> bookings =  bookingService.findAdminOverviewBookings();
+                    model.addAttribute(Constants.BOOKINGS, bookings);
 
-                    List<Booking> requests = bookingService.findAll()
-                            .stream()
-                            .filter(r -> r.getStatus() == BookingStatus.PENDING)
-                            .collect(Collectors.toList());
-
-                    model.addAttribute("requests", requests);
+                    List<Booking> requests = bookingService.findAdminOverviewRequests();
+                    model.addAttribute(Constants.REQUESTS, requests);
                     break;
             }
         }
 
-        model.addAttribute("bodyContent", "home");
+        model.addAttribute(Constants.BODY_CONTENT, "home");
         return "master-template";
     }
 
@@ -114,7 +108,7 @@ public class HomeController {
     public String acceptReservation(@PathVariable int booking_id) {
         try{
             bookingService.updateStatus(booking_id, BookingStatus.ACCEPTED);
-            return "redirect:/home#requests";
+            return "redirect:/home#overview";
         }catch (BookingNotFoundException e) {
             return "redirect:/home#myReservations?error=true&errorMessage=" + e.getMessage();
         }
@@ -127,7 +121,7 @@ public class HomeController {
     public String rejectReservation(@PathVariable int booking_id) {
         try{
             bookingService.updateStatus(booking_id, BookingStatus.REJECTED);
-            return "redirect:/home#requests";
+            return "redirect:/home#overview";
         }catch (BookingNotFoundException e) {
             return "redirect:/home#myReservations?error=true&errorMessage=" + e.getMessage();
         }
@@ -135,7 +129,7 @@ public class HomeController {
 
     @GetMapping("/access_denied")
     public String getAccessDeniedPage (Model model){
-        model.addAttribute("bodyContent", "access-denied");
+        model.addAttribute(Constants.BODY_CONTENT, "access-denied");
         return "master-template";
     }
 

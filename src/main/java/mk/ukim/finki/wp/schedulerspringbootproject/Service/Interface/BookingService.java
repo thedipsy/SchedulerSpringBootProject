@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface BookingService {
 
     List<Booking> findAll();
+    List<Booking> findAdminOverviewBookings();
+    List<Booking> findAdminOverviewRequests();
     Booking findById(int id);
     Booking save(BookingDto bookingDto);
     void deleteById(int id);

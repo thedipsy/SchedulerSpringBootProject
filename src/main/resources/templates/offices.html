@@ -1,7 +1,7 @@
 <th:block>
 
     <!--    Offices-->
-    <header class="header" id="offices">
+    <div class="header" id="offices">
         <div class="header-content">
             <div class="container">
                 <div class="row">
@@ -26,7 +26,7 @@
                                             <td th:text="${office.getOrdinalNumber()}"></td>
 
                                             <td>
-                                                <a class="btn btn-sm btn-info red-background"
+                                                <a class="btn btn-sm btn-danger"
                                                    th:href="@{'/offices/delete-office/{office_id}' (office_id=${office.getOfficeId()})}"
                                                    th:method="GET">
                                                     <i class="fa fa-trash" th:text="Delete"></i>
@@ -55,7 +55,7 @@
                             <h1>Add Office</h1>
                             <form th:action="@{/offices/add-office}" th:method="POST">
                                 <div class="form-row">
-                                    <div class="form-group col-md-6">
+                                    <div class="form-group col-lg-6">
                                         <label for="ordinalNumber" class="dark-text-color">Ordinal Number</label>
                                         <input name="ordinal_number" class="form-control-input" id="ordinalNumber" placeholder="ordinal number"
                                                type="number">
@@ -69,7 +69,7 @@
                 </div>
             </div>
         </div>
-    </header>
+    </div>
 
 
 

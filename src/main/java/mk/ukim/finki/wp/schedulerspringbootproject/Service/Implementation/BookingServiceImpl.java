@@ -1,5 +1,6 @@
 package mk.ukim.finki.wp.schedulerspringbootproject.Service.Implementation;
 
+import mk.ukim.finki.wp.schedulerspringbootproject.Config.Constants;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Booking;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Employee;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus;
@@ -36,6 +37,17 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.findAll();
     }
 
+    @Override
+    public List<Booking> findAdminOverviewBookings() {
+        return bookingRepository.findAllByStatusNot(BookingStatus.PENDING);
+    }
+
+    @Override
+    public List<Booking> findAdminOverviewRequests() {
+        return bookingRepository.findAllByStatus(BookingStatus.PENDING);
+    }
+
+
     /**
      * Returns a booking by id
      */
@@ -70,8 +82,8 @@ public class BookingServiceImpl implements BookingService {
 
         //send email for update of status
         String to = booking.getEmployee().getEmail();
-        String topic = "Booking Updated!";
-        String body = "Your booking has been updated.\nStatus: " + status;
+        String topic = Constants.EMAIL_TITLE_UPDATE;
+        String body = Constants.EMAIL_BODY_UPDATE + status;
 
         emailService.sendEmail(to, topic, body);
 

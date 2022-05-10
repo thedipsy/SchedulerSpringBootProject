@@ -1,14 +1,11 @@
 package mk.ukim.finki.wp.schedulerspringbootproject.Web.Controller;
 
+import mk.ukim.finki.wp.schedulerspringbootproject.Config.Constants;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Dto.OfficeDto;
-import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Office;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.OfficeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-
 
 @Controller
 @RequestMapping("/offices")
@@ -29,12 +26,12 @@ public class OfficeController {
                                  @RequestParam(required = false) String errorMessage,
                                  Model model) {
         if (error != null) {
-            model.addAttribute("hasError", true);
-            model.addAttribute("error", errorMessage);
+            model.addAttribute(Constants.HAS_ERROR, true);
+            model.addAttribute(Constants.ERROR, errorMessage);
         }
 
-        model.addAttribute("offices", officeService.findAll() != null ? officeService.findAll() : new ArrayList<Office>());
-        model.addAttribute("bodyContent", "offices");
+        model.addAttribute(Constants.OFFICES, officeService.findAll());
+        model.addAttribute(Constants.BODY_CONTENT, "offices");
         return "master-template";
     }
 

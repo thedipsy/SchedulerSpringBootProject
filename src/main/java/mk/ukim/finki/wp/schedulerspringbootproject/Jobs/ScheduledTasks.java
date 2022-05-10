@@ -1,5 +1,6 @@
 package mk.ukim.finki.wp.schedulerspringbootproject.Jobs;
 
+import mk.ukim.finki.wp.schedulerspringbootproject.Config.HelperClass;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Booking;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStatus;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.BookingService;
@@ -28,7 +29,7 @@ public class ScheduledTasks {
         bookings.stream()
                 .filter(b -> b.getStatus().equals(BookingStatus.PENDING))
                 .forEach(b ->{
-                    if(hasDatePassed(b)){
+                    if(HelperClass.hasDatePassed(b)){
                                 bookingService.updateStatus(b.getBookingId(), BookingStatus.EXPIRED);
                         }
                 });
@@ -44,9 +45,8 @@ public class ScheduledTasks {
         bookings.stream()
                 .filter(b -> b.getStatus().equals(BookingStatus.ACCEPTED))
                 .forEach(b ->{
-                    if(hasDatePassed(b)){
+                    if(HelperClass.isToday(b)){
                         bookingService.updateStatus(b.getBookingId(), BookingStatus.IN_PROGRESS);
-                        //TOCHANGE isCurrentDay instead of has DatePassed
                     }
                 });
     }
@@ -61,20 +61,13 @@ public class ScheduledTasks {
         bookings.stream()
                 .filter(b -> b.getStatus().equals(BookingStatus.IN_PROGRESS))
                 .forEach(b ->{
-                    if(hasDatePassed(b)){
+                    if(HelperClass.hasDatePassed(b)){
                         bookingService.updateStatus(b.getBookingId(), BookingStatus.FINISHED);
                     }
                 });
     }
 
-    /**
-     * Method that returns true if the booked date from the booking has passed, returns false if the date is in the future
-     * @param b
-     * @return
-     */
-    private boolean hasDatePassed(Booking b) {
-        return LocalDate.now().isAfter(b.getBookedDate());
-    }
+
 
 }
 

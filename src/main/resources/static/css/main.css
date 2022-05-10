@@ -42,6 +42,8 @@
 styles
  */
 body {
+    margin: 0;
+    padding: 0;
     width: 100%;
     height: 100%;
     background-color: #E2D784;
@@ -846,6 +848,7 @@ input[type='checkbox'] {
 /*********************/
 .header {
     background-color: #E2D784;
+    min-height: 100vh;
 }
 
 .header .header-content {
@@ -1669,13 +1672,15 @@ a:hover.back-to-top {
     margin-left: auto;
 }
 
-.ex-2-header .form-container {
+.form-container {
     max-width: 30rem;
     margin-right: auto;
     margin-left: auto;
     padding: 2.25rem 1.25rem 1.25rem 1.25rem;
     border-radius: 0.5rem;
 }
+
+
 
 .ex-2-header .checkbox {
     text-align: left;
@@ -2413,6 +2418,11 @@ button[type="submit"]:hover {
 
 .dark-text-color {
     color: #05595B;
+}
+
+a.dark-text-color:hover{
+    color: #033233;
+    text-shadow: black;
 }
 
 .profile-div{

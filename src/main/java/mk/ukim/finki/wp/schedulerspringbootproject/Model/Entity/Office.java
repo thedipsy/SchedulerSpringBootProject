@@ -16,7 +16,7 @@ public class Office {
 
     private int ordinalNumber;
 
-    @OneToMany(mappedBy = "office")
+    @OneToMany(mappedBy = "office", fetch = FetchType.LAZY, cascade={CascadeType.REMOVE})
     private List<Desk> deskList;
 
     public Office() {}
