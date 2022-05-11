@@ -4,10 +4,16 @@ import mk.ukim.finki.wp.schedulerspringbootproject.Config.Constants;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Dto.DeskDto;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Desk;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Employee;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.DeskAlreadyAssignedException;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.DeskNotFoundException;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.OfficeNotFoundException;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.UniqueOrdinalNumberException;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.DeskService;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.EmployeeService;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.OfficeService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,6 +65,7 @@ public class DeskController {
      * POST Method that saves the desk to the selected office.
      * Optionally, if an employee is passed as a parameter, it assigns the desk to the given employee.
      */
+    @Transactional
     @PostMapping("/addDesk")
     public String createDesk(@RequestParam(required = false) Long id,
                              @RequestParam int ordinal_number,
@@ -69,7 +76,9 @@ public class DeskController {
             Desk desk;
             if(id != null) {
                 desk = deskService.findById(id.intValue());
-                deskService.edit(id.intValue(), ordinal_number, office_id);
+                if(desk.getOrdinalNumber() != ordinal_number || desk.getOffice().getOfficeId() != office_id) {
+                    deskService.edit(id.intValue(), ordinal_number, office_id);
+                }
             }
             else {
                 DeskDto deskDto = new DeskDto(ordinal_number, office_id);
@@ -77,13 +86,23 @@ public class DeskController {
             }
 
             if(employee_id != null && !employee_id.isEmpty()){
+                //if desk had an employee, delete the relationship before assigning to a new employee
+                if(desk.getEmployee() != null){
+                    employeeService.deleteDeskFromEmployee(desk.getEmployee().getEmail());
+                    deskService.deleteEmployeeFromDesk(desk);
+                }
                 if(id == null || desk.getEmployee() == null || !(desk.getEmployee().getEmail().equals(employee_id))) {
                     employeeService.assignDesk(employee_id, desk.getDeskId());
+                }
+            }else {
+                if(id != null && desk.getEmployee() != null){
+                    employeeService.deleteDeskFromEmployee(desk.getEmployee().getEmail());
                 }
             }
 
             return "redirect:/desks";
-        } catch (Exception e) {
+        } catch (DeskNotFoundException |  OfficeNotFoundException |
+                DeskAlreadyAssignedException | UsernameNotFoundException | UniqueOrdinalNumberException e) {
             return "redirect:/desks?error=true&errorMessage=" + e.getMessage();
         }
     }
@@ -97,14 +116,18 @@ public class DeskController {
         try{
             Desk desk = deskService.findById(desk_id);
             model.addAttribute(Constants.SELECTED_DESK, desk);
-            model.addAttribute(Constants.OFFICES, officeService.findAll());
             model.addAttribute(Constants.DESKS, deskService.findAll());
-            model.addAttribute(Constants.EMPLOYEES, employeeService.findAll());
+            List<Employee> employeesWithoutDesks = employeeService.findAll()
+                    .stream()
+                    .filter(e -> e.getDesk() == null)
+                    .collect(Collectors.toList());
+            model.addAttribute(Constants.EMPLOYEES, employeesWithoutDesks);
+            model.addAttribute(Constants.OFFICES, officeService.findAll());
 
             model.addAttribute(Constants.BODY_CONTENT, "desks");
             return "master-template";
-        } catch(Exception e){
-            return "redirect:/desks?error=true";
+        } catch(DeskNotFoundException e){
+            return "redirect:/desks?error=true&errorMessage=" + e.getMessage();
         }
     }
 
@@ -116,8 +139,8 @@ public class DeskController {
         try{
             deskService.deleteById(desk_id);
             return "redirect:/desks";
-        } catch(Exception e){
-            return "redirect:/desks?error=true";
+        } catch(DeskNotFoundException e){
+            return "redirect:/desks?error=true&errorMessage=" + e.getMessage();
         }
     }
 }

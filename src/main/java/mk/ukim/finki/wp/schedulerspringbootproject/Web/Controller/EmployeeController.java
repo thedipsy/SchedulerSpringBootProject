@@ -5,14 +5,16 @@ import mk.ukim.finki.wp.schedulerspringbootproject.Model.Dto.EmployeeDto;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Desk;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Employee;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.Role;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.*;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.DeskService;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.EmployeeService;
-import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.OfficeService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,13 +37,21 @@ public class EmployeeController {
     @GetMapping
     public String getEmployeesPage(@RequestParam(required = false) String error,
                                    @RequestParam(required = false) String errorMessage,
+                                  HttpServletRequest request,
                                   Model model) {
         if (error != null) {
             model.addAttribute(Constants.HAS_ERROR, true);
             model.addAttribute(Constants.ERROR, errorMessage);
         }
 
-        model.addAttribute(Constants.EMPLOYEES, employeeService.findAll());
+        List<Employee> allEmployees = employeeService.findAll();
+
+        if (request.getRemoteUser() != null) {
+            Employee employee = employeeService.findEmployeeByEmail(request.getRemoteUser());
+            allEmployees.remove(employee); //remove current user from the overview of employees
+        }
+
+        model.addAttribute(Constants.EMPLOYEES, allEmployees);
 
         List<Desk> desksWithoutEmployees = deskService.findAll()
                 .stream()
@@ -111,7 +121,8 @@ public class EmployeeController {
                 }
             }
             return "redirect:/employees";
-        } catch(Exception e){
+        } catch(IllegalArgumentException | EmployeeNotFound | EmailAlreadyUsedException | UsernameNotFoundException |
+                DeskNotFoundException | DeskAlreadyAssignedException | InvalidUsernameOrPasswordException e){
             return "redirect:/employees?error=true&errorMessage=" + e.getMessage();
         }
     }

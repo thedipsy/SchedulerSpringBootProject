@@ -69,41 +69,45 @@
                                     <div class="form-group col-lg-6">
                                         <input id="id" type="hidden" name="id" th:value="(${selectedDesk} != null ? ${selectedDesk.getDeskId()} : '')">
 
-                                        <label class="dark-text-color" for="desk_ordinalNumber">Ordinal Number</label>
-                                        <input class="form-control" id="desk_ordinalNumber" name="ordinal_number"
+                                        <label class="dark-text-color" for="desk_ordinalNumber">Ordinal Number*</label>
+                                        <input required class="form-control" id="desk_ordinalNumber" name="ordinal_number"
                                                placeholder="ordinal number" type="number" th:value="(${selectedDesk} != null ? ${selectedDesk.getOrdinalNumber()} : '')">
 
-                                        <label class="dark-text-color" for="office_id">Office</label><br/>
+                                        <label class="dark-text-color" for="office_id">Office*</label><br/>
                                         <select class="form-control-select" id="office_id" name="office_id">
+
                                             <option th:if="${selectedDesk} != null"
                                                     th:selected="${selectedDesk.getOffice() == office.getOfficeId()}"
                                                     th:each="office : ${offices}"
                                                     th:text="${office.getOrdinalNumber()}"
-                                                    th:value="${office.getOrdinalNumber()}"></option>
+                                                    th:value="${office.getOfficeId()}"></option>
 
+                                            <option th:value="-1">Select office</option>
                                             <option th:if="${selectedDesk} == null"
                                                     th:each="office : ${offices}"
                                                     th:text="${office.getOrdinalNumber()}"
-                                                    th:value="${office.getOrdinalNumber()}"></option>
+                                                    th:value="${office.getOfficeId()}"></option>
                                         </select>
 
                                         <label class="dark-text-color" for="employee_id">Employee</label><br/>
                                         <select class="form-control-select" id="employee_id" name="employee_id">
 
 
-                                            <option th:if="${selectedDesk} != null"
-                                                    th:selected="${selectedDesk.getEmployee() == employee.getEmail()}"
-                                                    th:each="employee : ${employees}"
-                                                    th:text="${employee.toString()}"
-                                                    th:value="${employee.getEmail()}"></option>
+                                            <option th:if="${selectedDesk != null && selectedDesk.getEmployee() != null}"
+                                                    th:selected="${selectedDesk.getEmployee().toString()}"
+                                                    th:text="${selectedDesk.getEmployee().toString()}"
+                                                    th:value="${selectedDesk.getEmployee().getEmail()}"></option>
                                             <option th:value="${null}">Not specified</option>
-                                            <option th:if="${selectedDesk} == null"
+                                            <option
                                                     th:each="employee : ${employees}"
                                                     th:text="${employee.toString()}"
                                                     th:value="${employee.getEmail()}"></option>
                                         </select>
 
                                         <button class="red-button" type="submit">Submit</button>
+                                        <!--error message-->
+                                        <label class="text-danger"
+                                               th:if="${hasError}" th:text="${error}"></label>
                                     </div>
                                 </div>
                             </form>

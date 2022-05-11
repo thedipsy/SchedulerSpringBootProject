@@ -84,7 +84,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.save(employee);
 
         //Send password via email only if the registering had succeeded
-        String body = Constants.EMAIL_BODY_WELCOME;
+        String body = Constants.EMAIL_BODY_WELCOME_ADMIN;
         String title = Constants.EMAIL_TITLE_WELCOME;
         emailService.sendEmail(employeeDto.getEmail(), title, body);
         return employee;
@@ -120,23 +120,22 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.save(employee);
 
         //Send password via email only if the registering had succeeded
-        String body = "Welcome!\nYou are now registered on Work Scheduler.\nTo login use the following generated password " + generatedPassword +
-                "\nPlease change the password once you log in for security reasons.";
-        emailService.sendEmail(employeeDto.getEmail(), "My Work Scheduler Password", body);
+        String body = Constants.EMAIL_BODY_WELCOME_EMPLOYEE + generatedPassword + "\n" + Constants.EMAIL_BODY_CHANGE_PASSWORD;
+        String title = Constants.EMAIL_TITLE_WELCOME_EMPLOYEE_PASSWORD;
+        emailService.sendEmail(employeeDto.getEmail(), title, body);
         return employee;
     }
 
     /**
      * Returns a 10 characters random generated password containing 0-9, a-z, A-Z
-     * @return
      */
     public static String generatePassword() {
-        String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        Random rnd = new Random();
+        String alphaNumeric = Constants.ALPHA_NUMERIC;
+        Random random = new Random();
 
         StringBuilder sb = new StringBuilder(10);
         for (int i = 0; i < 10; i++) {
-            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+            sb.append(alphaNumeric.charAt(random.nextInt(alphaNumeric.length())));
         }
         return sb.toString();
     }

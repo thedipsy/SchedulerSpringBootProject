@@ -3,9 +3,12 @@ package mk.ukim.finki.wp.schedulerspringbootproject.Web.Controller;
 import mk.ukim.finki.wp.schedulerspringbootproject.Config.Constants;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Dto.EmployeeDto;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.Role;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.CompanyNotFoundException;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.EmailAlreadyUsedException;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.InvalidCompanyKeyException;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.InvalidUsernameOrPasswordException;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.CompanyService;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.EmployeeService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,15 +41,6 @@ public class RegisterController {
             model.addAttribute(Constants.ERROR, errorMessage);
         }
 
-//      Create company manually
-//        CompanyDto companyDto = new CompanyDto(
-//                "My Company",
-//                "9ti Maj 36",
-//                "+38976999298",
-//                passwordEncoder.encode("secret")
-//        );
-//        companyService.save(companyDto);
-
         model.addAttribute(Constants.COMPANIES, companyService.findAll());
 
         model.addAttribute(Constants.BODY_CONTENT, "register");
@@ -71,7 +65,8 @@ public class RegisterController {
                 employeeService.registerAdmin(employeeDto, company_id, company_key);
 
             return "redirect:/login";
-        } catch(Exception e){
+        } catch(InvalidUsernameOrPasswordException | CompanyNotFoundException |
+                InvalidCompanyKeyException | EmailAlreadyUsedException e){
             return "redirect:/register?error=true&errorMessage=" + e.getMessage();
         }
     }

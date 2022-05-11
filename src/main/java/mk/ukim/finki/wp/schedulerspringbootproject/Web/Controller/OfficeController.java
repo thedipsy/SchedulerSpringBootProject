@@ -2,6 +2,8 @@ package mk.ukim.finki.wp.schedulerspringbootproject.Web.Controller;
 
 import mk.ukim.finki.wp.schedulerspringbootproject.Config.Constants;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Dto.OfficeDto;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.OfficeNotFoundException;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.UniqueOrdinalNumberException;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.OfficeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,8 +48,9 @@ public class OfficeController {
             officeService.save(officeDto);
 
             return "redirect:/offices";
-        } catch (Exception e) {
+        } catch (UniqueOrdinalNumberException e) {
             return "redirect:/offices?error=true&errorMessage=" + e.getMessage();
+
         }
     }
 
@@ -59,7 +62,7 @@ public class OfficeController {
         try{
             officeService.deleteById(office_id);
             return "redirect:/offices";
-        } catch(Exception e){
+        } catch(OfficeNotFoundException e){
             return "redirect:/offices?error=true&errorMessage=" + e.getMessage();
         }
     }

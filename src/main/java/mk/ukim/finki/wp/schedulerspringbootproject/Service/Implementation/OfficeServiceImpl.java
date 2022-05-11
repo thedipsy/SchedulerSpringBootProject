@@ -4,6 +4,7 @@ import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Employee;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.OfficeNotFoundException;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Office;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Dto.OfficeDto;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.UniqueOrdinalNumberException;
 import mk.ukim.finki.wp.schedulerspringbootproject.Repository.EmployeeRepository;
 import mk.ukim.finki.wp.schedulerspringbootproject.Repository.OfficeRepository;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.OfficeService;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OfficeServiceImpl implements OfficeService {
@@ -40,11 +42,19 @@ public class OfficeServiceImpl implements OfficeService {
                 .orElseThrow(OfficeNotFoundException::new);
     }
 
+    @Override
+    public Optional<Office> findByOrdinalNumber(int ordinalNumber) {
+        return officeRepository.findByOrdinalNumber(ordinalNumber);
+    }
+
     /**
      * Saves a new office to database
      */
     @Override
     public Office save(OfficeDto officeDto) {
+        if(findByOrdinalNumber(officeDto.getOrdinalNumber()).isPresent()){
+            throw new UniqueOrdinalNumberException();
+        }
         Office office = new Office(officeDto.getOrdinalNumber());
 
         return officeRepository.save(office);

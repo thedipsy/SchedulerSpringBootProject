@@ -1,17 +1,17 @@
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top" xmlns:th="http://www.w3.org/1999/html">
     <div class="container">
 
-        <a class="navbar-brand logo-image">
+        <a class="navbar-brand logo-image" href="/home">
             <!--            logo-->
             <img th:src="@{/img/logo.png}" alt="Logo" src="../../static/img/logo.png"/>&emsp;&emsp;
-            <!--            email of the authenticated user-->
-            <th:block th:if="${#request.getRemoteUser() != null}">
-               <th:span th:style="'color: #E2D784;'" th:text="${#request.getRemoteUser()}">
 
-               </th:span>
-            </th:block>
-            </th:block>
         </a>
+
+        <!--            email of the authenticated user-->
+        <th:block th:if="${#request.getRemoteUser() != null}">
+            <th:span th:style="'color: #E2D784;font-size:18px;'" th:text="${#request.getRemoteUser()}">
+            </th:span>
+        </th:block>
 
         <button class="navbar-toggler dropdown-toggle" type="button" data-toggle="collapse"
                 data-target="#navbarExampleDefault" aria-controls="navbarExampleDefault" aria-expanded="false"

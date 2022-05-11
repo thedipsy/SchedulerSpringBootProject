@@ -10,7 +10,9 @@ public interface DeskService {
 
     List<Desk> findAll();
     Desk findById(int id);
+    Optional<Desk> findByOrdinalNumber(int ordinalNumber);
     Desk save(DeskDto deskDto);
     Optional<Desk> edit(int id, int ordinal_number, int office_id);
     void deleteById(int id);
+    void deleteEmployeeFromDesk(Desk desk);
 }

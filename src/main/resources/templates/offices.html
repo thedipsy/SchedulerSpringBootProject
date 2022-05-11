@@ -56,10 +56,14 @@
                             <form th:action="@{/offices/add-office}" th:method="POST">
                                 <div class="form-row">
                                     <div class="form-group col-lg-6">
-                                        <label for="ordinalNumber" class="dark-text-color">Ordinal Number</label>
+                                        <label for="ordinalNumber" class="dark-text-color">Ordinal Number*</label>
                                         <input name="ordinal_number" class="form-control-input" id="ordinalNumber" placeholder="ordinal number"
                                                type="number">
                                         <button class="red-button" type="submit">Add office</button>
+
+                                        <!--error message-->
+                                        <label class="text-danger"
+                                               th:if="${hasError}" th:text="${error}"></label>
                                     </div>
                                 </div>
                             </form>

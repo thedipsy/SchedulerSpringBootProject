@@ -64,6 +64,7 @@
                                         name="password"
                                         type="password"
                                         class="form-control-input"
+                                        autocomplete = "new-password"
                                         required/>
                             </div>
 
@@ -74,7 +75,7 @@
                                             th:each="company : ${companies}"
                                             th:value="${company.getCompanyId()}" th:text="${company.getName()}"></option>
                                     <option th:if="${companies == null || companies.size() == 0}"
-                                            th:value="-1" th:text="No available companies"></option>
+                                            th:value="-1">No available companies</option>
                                 </select>
                             </div>
 
@@ -101,7 +102,7 @@
 
                             <!--error message-->
                             <label class="text-danger"
-                                   th:if="${hasError}">Unsuccessful. Please try again.</label>
+                                   th:if="${hasError}" th:text="${error}"></label>
 
                         </form>
                     </div>

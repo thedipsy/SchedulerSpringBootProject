@@ -46,10 +46,9 @@
 
                                     <form th:action="@{/home/book}" th:method="POST">
                                         <label class="dark-text-color" for="date">Date:</label>&nbsp;
-                                        <input id="date" name="date" type="date" th:min="${currentDate}"/>
+                                        <input required id="date" name="date" type="date" th:min="${currentDate}"/>
                                         <br/> <br/>
 
-                                        <label th:if="${hasError}">*All fields are required.</label></br>
                                         <button class="btn-solid-lg " th:text="Book" type="submit"></button>
                                     </form>
 
@@ -110,8 +109,7 @@
 
                                     <th:block th:if="${requests.size() == 0}">
                                         <div>
-                                            <h5 style="color: #1d2124; opacity: 80%; padding-left: 20px;.">No pending
-                                                requests.</h5>
+                                            <h5 style="color: #1d2124; opacity: 80%; padding-left: 20px;.">No pending requests.</h5>
                                         </div>
                                     </th:block>
                                 </div>

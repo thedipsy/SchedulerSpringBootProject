@@ -87,21 +87,21 @@
                                 <div class="form-row">
                                     <input id="selectedEmployeeId" type="hidden" name="selectedEmployeeId" th:value="(${selectedEmployee} != null ? ${selectedEmployee.getEmail()} : '')">
                                     <div class="form-group col-md-6">
-                                        <input name="name" class="form-control" id="inputName" placeholder="Name" type="text" th:value="(${selectedEmployee != null} ? ${selectedEmployee.getName()} : '')">
+                                        <input required name="name" class="form-control" id="inputName" placeholder="Name" type="text" th:value="(${selectedEmployee != null} ? ${selectedEmployee.getName()} : '')">
                                     </div>
 
                                     <div class="form-group col-md-6">
-                                        <input name="surname" class="form-control" id="inputSurname" placeholder="Surname" type="text" th:value="(${selectedEmployee != null} ? ${selectedEmployee.getSurname()} : '')">
+                                        <input required name="surname" class="form-control" id="inputSurname" placeholder="Surname" type="text" th:value="(${selectedEmployee != null} ? ${selectedEmployee.getSurname()} : '')">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input name="email" class="form-control" id="inputEmail" placeholder="Email" type="email" th:value="(${selectedEmployee != null} ? ${selectedEmployee.getEmail()} : '')">
+                                    <input required name="email" class="form-control" id="inputEmail" placeholder="Email" type="email" th:value="(${selectedEmployee != null} ? ${selectedEmployee.getEmail()} : '')">
                                 </div>
                                 <div class="form-group">
-                                    <input name="phone" class="form-control" id="inputPhone" placeholder="Phone" type="text" th:value="(${selectedEmployee != null} ? ${selectedEmployee.getPhone()} : '')">
+                                    <input required name="phone" class="form-control" id="inputPhone" placeholder="Phone" type="text" th:value="(${selectedEmployee != null} ? ${selectedEmployee.getPhone()} : '')">
                                 </div>
                                 <div class="form-group">
-                                    <select name="role" id="role" class="form-control-select">
+                                    <select required name="role" id="role" class="form-control-select">
                                         <option th:if="${selectedEmployee != null}"
                                                 th:selected="${selectedEmployee.getRole() == role}"
                                                 th:each="role : ${T(mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.Role).values()}"
@@ -112,7 +112,7 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <select class="form-control-select" name="desk_id" id="desk_id">
+                                    <select  class="form-control-select" name="desk_id" id="desk_id">
                                         <option th:value="-1">Select desk</option>
                                         <option th:if="${selectedEmployee != null && selectedEmployee.getDesk() != null}"
                                                 th:selected="${selectedEmployee.getDesk().getDeskId()}"
@@ -126,6 +126,10 @@
                                     </select>
                                 </div>
                                 <button class="red-button" type="submit">Submit</button>
+
+                                <!--error message-->
+                                <label class="text-danger"
+                                       th:if="${hasError}" th:text="${error}"></label>
                             </form>
                         </div>
                     </div>

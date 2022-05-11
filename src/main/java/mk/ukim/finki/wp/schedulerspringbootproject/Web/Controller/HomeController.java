@@ -7,6 +7,7 @@ import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.BookingStat
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.BookingNotFoundException;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.BookingService;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.EmployeeService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -83,7 +84,7 @@ public class HomeController {
             }
 
             return "redirect:/home#myReservations";
-        } catch (Exception e) {
+        } catch (UsernameNotFoundException e) {
             return "redirect:/home#reserve?error=true&errorMessage=" + e.getMessage();
         }
     }

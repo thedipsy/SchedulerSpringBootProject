@@ -39,6 +39,7 @@
                                        name="old_password"
                                        type="password"
                                        class="form-control-input"
+                                       autocomplete = "new-password"
                                        required/>
                             </div>
                             <!--new password-->
@@ -48,6 +49,7 @@
                                        name="new_password"
                                        type="password"
                                        class="form-control-input"
+                                       autocomplete = "new-password"
                                        required/>
                             </div>
                             <!--confirm password-->
@@ -57,10 +59,20 @@
                                        name="confirm_password"
                                        type="password"
                                        class="form-control-input"
+                                       autocomplete = "new-password"
                                        required/>
                             </div>
 
                             <button class="red-button" type="submit">Submit</button>
+
+                            <!--error message-->
+                            <label class="text-danger"
+                                   th:if="${hasError}" th:text="${error}"></label>
+
+                            <!--success message-->
+                            <label class="text-white"
+                                   th:if="${success}">Password is changed</label>
+
                         </form>
                     </div>
                 </div>
