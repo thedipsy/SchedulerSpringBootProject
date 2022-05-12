@@ -32,7 +32,7 @@ public class Employee implements UserDetails {
     @ManyToOne
     private Company company;
 
-    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade={CascadeType.REMOVE})
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade={CascadeType.REMOVE})
     private List<Booking> bookingList;
 
     public Employee() {

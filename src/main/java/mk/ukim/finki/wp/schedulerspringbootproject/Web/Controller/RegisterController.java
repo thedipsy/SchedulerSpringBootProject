@@ -1,7 +1,9 @@
 package mk.ukim.finki.wp.schedulerspringbootproject.Web.Controller;
 
 import mk.ukim.finki.wp.schedulerspringbootproject.Config.Constants;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Dto.CompanyDto;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Dto.EmployeeDto;
+import mk.ukim.finki.wp.schedulerspringbootproject.Model.Entity.Company;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Enumetarion.Role;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.CompanyNotFoundException;
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.EmailAlreadyUsedException;
@@ -9,6 +11,7 @@ import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.InvalidCompan
 import mk.ukim.finki.wp.schedulerspringbootproject.Model.Exception.InvalidUsernameOrPasswordException;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.CompanyService;
 import mk.ukim.finki.wp.schedulerspringbootproject.Service.Interface.EmployeeService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,10 +25,12 @@ public class RegisterController {
 
     private final EmployeeService employeeService;
     private final CompanyService companyService;
+    private final PasswordEncoder passwordEncoder;
 
-    public RegisterController(EmployeeService employeeService, CompanyService companyService) {
+    public RegisterController(EmployeeService employeeService, CompanyService companyService, PasswordEncoder passwordEncoder) {
         this.employeeService = employeeService;
         this.companyService = companyService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -36,6 +41,11 @@ public class RegisterController {
     public String getRegisterPage(@RequestParam(required = false) String error,
                                    @RequestParam(required = false) String errorMessage,
                                    Model model) {
+//        CompanyDto company1 = new CompanyDto("Company 1", "9ti maj 36/1", "+38976999298", passwordEncoder.encode("secret"));
+//        CompanyDto company2 = new CompanyDto("Company 2", "9ti maj 36/1", "+38976999298", passwordEncoder.encode("secret"));
+//        companyService.save(company1);
+//        companyService.save(company2);
+
         if (error != null) {
             model.addAttribute(Constants.HAS_ERROR, true);
             model.addAttribute(Constants.ERROR, errorMessage);

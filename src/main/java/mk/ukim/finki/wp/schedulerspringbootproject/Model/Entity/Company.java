@@ -33,4 +33,9 @@ public class Company {
         this.companyKey = companyKey;
     }
 
+    @Override
+    public String toString() {
+        return "companyId=" + companyId;
+    }
+
 }

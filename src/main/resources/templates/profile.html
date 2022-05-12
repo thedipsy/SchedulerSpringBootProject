@@ -18,7 +18,7 @@
                             <li class="list-group-item" th:if="${user} != null"
                                 th:text="'Phone: ' + ${user.getPhone()}"></li>
                             <li class="list-group-item" th:if="${user.getDesk()} != null"
-                                th:text="'Desk: '+ ${user.getDesk().getDeskId()}"></li>
+                                th:text="'Desk: '+ ${user.getDesk().getOrdinalNumber()}"></li>
                         </div>
                         <br/>
                     </div>

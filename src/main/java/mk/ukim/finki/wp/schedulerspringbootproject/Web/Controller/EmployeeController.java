@@ -48,7 +48,7 @@ public class EmployeeController {
 
         if (request.getRemoteUser() != null) {
             Employee employee = employeeService.findEmployeeByEmail(request.getRemoteUser());
-            allEmployees.remove(employee); //remove current user from the overview of employees
+            allEmployees.removeIf(e -> e.getEmail().equals(employee.getEmail())); //remove current user from the overview of employees
         }
 
         model.addAttribute(Constants.EMPLOYEES, allEmployees);
